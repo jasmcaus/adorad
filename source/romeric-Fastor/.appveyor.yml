@@ -1,0 +1,39 @@
+version: '{build}'
+
+branches:
+  only:
+    - master
+
+platform:
+  - x64
+
+configuration:
+  - Debug
+
+image:
+  - Visual Studio 2019
+
+init:
+  - echo %platform%
+  - echo %APPVEYOR_BUILD_WORKER_IMAGE%
+  - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2019" ( set generator="Visual Studio 16 2019" )
+  - echo %generator%
+
+matrix:
+  fast_finish: true
+
+before_build:
+  - echo %APPVEYOR_BUILD_FOLDER%
+  - mkdir "%APPVEYOR_BUILD_FOLDER%/tests/build"
+  - cd "%APPVEYOR_BUILD_FOLDER%/tests/build"
+  - cmake --version
+  - cmake .. -G %generator% -A %platform%
+
+build:
+  project: "%APPVEYOR_BUILD_FOLDER%/tests/build/test_fastor.sln"
+  verbosity: minimal
+  parallel: true
+
+test_script:
+  - cd "%APPVEYOR_BUILD_FOLDER%/tests/build"
+  - ctest -V
