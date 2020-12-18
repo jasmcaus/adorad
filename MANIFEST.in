@@ -1,0 +1,14 @@
+include setup.cfg
+include .github/CONTRIBUTING.md
+include LICENSE
+include README.md
+include INSTALL.md 
+include CONTRIBUTORS 
+include tools/cythonize.py
+include pyproject.toml
+
+recursive-include adorad/data *
+# recursive-include adorad *.pyx *.pyd *.pxd *.pxi *.py *.c *.cpp *.h *.ini *.txt *.in *.md
+recursive-include adorad *.py *.ini *.txt *.in *.md
+
+recursive-exclude * __pycache__ *.npy *.npz *.c *.cpp *.h *.pyx *.pyd *.pxd *.pxi
