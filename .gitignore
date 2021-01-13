@@ -2,3 +2,4 @@ test.py
 build/*
 dist/*
 adorad.egg-info/*
+*.pyc
