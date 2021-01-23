@@ -1,0 +1,1 @@
+compile_cpp_example_with_modes(inline_okl main.cpp)
