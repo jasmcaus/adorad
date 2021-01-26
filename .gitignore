@@ -5,3 +5,6 @@ adorad.egg-info/*
 *.pyc
 __pycache__/*
 .vscode/*
+*.exe
+*.out
+*.obj
