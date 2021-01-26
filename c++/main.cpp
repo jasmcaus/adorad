@@ -1,4 +1,4 @@
-#include "../srcTensor.h"
+#include "src/Tensor.h"
 #include <iostream>
 
 int main() {
