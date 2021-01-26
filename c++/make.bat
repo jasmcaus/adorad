@@ -3,6 +3,7 @@
 pushd %~dp0
 
 if "%1" == "" goto all
+if "%1" == "all" goto all
 if "%1" == "compile" goto compile
 if "%1" == "run" goto run
 if "%1" == "clean" goto clean
@@ -17,27 +18,25 @@ REM  -Wall  - used to turn on most compiler warnings
 set CFLAGS=-g -Wall
 
 
-:alll
-@echo "All"
-%COMPILER% %CFLAGS% %CPPSOURCE% -o %TARGET% -I %HSOURCE%
+:all
+g++ -g -Wall main.cpp src/*.cpp -o ad -I ./src
+@REM %COMPILER% %CFLAGS% %CPPSOURCE% -o %TARGET% -I %HSOURCE%
 %TARGET%
 goto end 
 
 :compile 
-@echo "Compile"
-%COMPILER% %CFLAGS% %CPPSOURCE% -o %TARGET% -I %HSOURCE%
+g++ -g -Wall main.cpp src/*.cpp -o ad -I ./src
+@REM %COMPILER% %CFLAGS% %CPPSOURCE% -o %TARGET% -I %HSOURCE%
 goto end 
 
 :run 
-@echo "Run"
 %TARGET%
 goto end 
 
 :clean 
-@echo "clean"
 del %TARGET%.exe
 
-@REM For non-windows users, uncomment the following:
+@REM For non-windows users, use the following:
 @REM rm %TARGET%.exe
 
 goto end 
