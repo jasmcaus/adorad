@@ -3,12 +3,12 @@
 
 int main() {
     std::cout << "Hello Tensors!" << std::endl;
-    ad::Tensor m1(3, 2, false, 3);
+    ad::Tensor m1(3, 6, false, 3);
     ad::Tensor m2(3, 2, false, 3);
 
-    m1 + m2;
-    m1.print();
-    m2.print();
+    ad::Tensor c = m1 * m2;
+    c.print();
+
     return 1;
 
 }

@@ -64,6 +64,7 @@ public:
     // Only to be used internally
     int _getVal(int rows, int columns) {return this->values.at(rows).at(columns); }
 
+
     // Find the sum of two Tensors 
     Tensor sum(Tensor &tens) {
         if( rows != tens.shape()[0] || columns != tens.shape()[1])
@@ -120,7 +121,7 @@ public:
 
     // No. of Columns of the 1st Tensor must be = no. of rows of the 2nd Tensor
     Tensor operator*(const Tensor &tens) {
-        if(this->rows != tens.shape()[0])
+        if(this->columns != tens.shape()[0])
             throw std::invalid_argument("Tensor dimensions not compatible for Tensor multiplication");
 
         Tensor m(this->rows, tens.shape()[1], false, 0);
