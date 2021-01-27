@@ -3,7 +3,7 @@
 
 int main() {
     std::cout << "Hello Tensors!" << std::endl;
-    ad::Tensor m(3, 2, true, 0);
+    ad::Tensor m(3, 2, false, 0);
 
     m.print();
     return 1;
