@@ -11,20 +11,14 @@ namespace ad {
 
 class Tensor {
 public:
-    /**
-     * Constructor for a 2D Tensor. If random is true, the 
-     * matrix is initialized with random values between 1 and 0, otherwise it is 
-     * initialized with init value.
-     * 
-     * If one dimension is zero, 'invalid argument' exception is raised.
-     */
-    Tensor(int rows, int columns, bool isRandom, double init){
+    const int ndim = 2; //2D Tensor 
+
+    Tensor(int rows, int columns, bool isRandom, double init=0){
         if(rows == 0 || columns == 0) 
-            throw std::invalid_argument("Tensor dimensions can't be zero");
+            throw std::invalid_argument("Tensor dimensions cannot be zero.");
 
         this->rows = rows;
         this->columns = columns;
-
 
         if(isRandom)
             _set_random_tensor();
@@ -32,88 +26,131 @@ public:
             _set_tensor(init);
     }
 
-    // /**
-    //  * Copy constructor. Create a new tensor copying the values of the Tensor.
-    //  */
+    // Create a new tensor copying the values of the original Tensor.
+    Tensor(const Tensor &tens)
+    {
+        rows = tens.rows;
+        columns = tens.columns;
 
-    // Tensor(const Tensor &tens)
-    // {
-    //     rows = tens.rows;
-    //     columns = tens.columns;
-
-    //     for(int r = 0; r < tens.shape()[0]; ++r) {
-    //         std::vector<double> row;
-    //         for(int c = 0; c < tens.shape()[1]; ++c) {
-    //             row.push_back(tens(r, c));
-    //         }
-    //         values.push_back(row);
-    //     }
-    // }
-
-    // Return shape of the matrix in a vector of ints.
-    std::vector<int> shape() {
-        return std::vector<int>{rows, columns};
-    }
-
-    // Doesn't transpose the original Tensor
-    Tensor transpose(){
-        Tensor m(this->columns, this->rows, false, 0);
-
-        for(int i = 0; i < this->rows; i++) {
-            for(int j = 0; j < this->columns; j++) {
-                m.setVal(j, i, this->getVal(i, j));
+        for(int r = 0; r < tens.shape()[0]; ++r) {
+            std::vector<double> row;
+            for(int c = 0; c < tens.shape()[1]; ++c) {
+                row.push_back(tens(r, c));
             }
+            values.push_back(row);
         }
-        return m;
-    }
-
-    Tensor clone() {
-        Tensor m(this->rows, this->columns, false, 0);
-
-        for(int i = 0; i < this->rows; i++) {
-            for(int j = 0; j < this->columns; j++) {
-                m.setVal(i, j, this->getVal(i, j));
-            }
-        }
-        return m;
     }
 
     void print() {
         for(int i = 0; i < this->rows; i++) {
             for(int j = 0; j < this->columns; j++) {
-                std::cout << this->values.at(i).at(j) << "\t\t";
+                std::cout << this->values.at(i).at(j) << "\t";
             }
             std::cout << std::endl;
         }
     }
 
-    std::vector<std::vector<double>> getValues() { 
-        return this->values; 
-    }
+    // Return shape of the matrix in a vector of ints.
+    std::vector<int> shape() const { return std::vector<int>{rows, columns}; }
 
-    void setVal(int rows, int columns, int val) {
-        this->values.at(rows).at(columns) = val;
-    }
+    std::vector<std::vector<double>> getTensorValues() { return this->values; }
+
+    int getNumRows() { return this->rows; }
+    int getNumCols() { return this->columns; }
+
+    // Only to be used internally
+    void _setVal(int rows, int columns, int val) { this->values.at(rows).at(columns) = val; }
     
-    int getVal(int rows, int columns) {
-        return this->values.at(rows).at(columns);
+    // Only to be used internally
+    int _getVal(int rows, int columns) {return this->values.at(rows).at(columns); }
+
+    // Find the sum of two Tensors 
+    Tensor sum(Tensor &tens) {
+        if( rows != tens.shape()[0] || columns != tens.shape()[1])
+            throw std::invalid_argument("Tensors must have the same dimensions.");
+
+        Tensor sum(tens);
+        for(int r = 0; r < tens.shape()[0]; ++r) {
+            for(int c = 0; c < tens.shape()[1]; ++c) {
+                sum(r, c) = sum(r, c) + (*this)(r, c);
+            }
+        }
+        return sum;
     }
 
-    int getNumRows() { 
-        return this->rows; 
-    }
-    int getNumCols() { 
-        return this->columns; 
-    }
+    // Find the sum of two Tensors 
+    // No. of Columns of the 1st Tensor must be = no. of rows of the 2nd Tensor
+    Tensor matmul(Tensor &tens) {
+        if(this->rows != tens.shape()[0])
+            throw std::invalid_argument("Tensor dimensions not compatible for Tensor multiplication");
 
+        Tensor m(this->rows, tens.shape()[1], false, 0);
+        for(int r = 0; r < this->rows; ++r) {  // loop over rows of Tensor 1
+            for(int c = 0; c < tens.shape()[1]; ++c) { // loop over cols of Tensor 2
+                double prod = 0;
+                for(int i = 0; i < this->columns; ++i) {
+                    prod += ((*this)(r, i) * tens(i, c));
+                }
+                m(r, c) = prod;
+            }
+        }
+        return m;
+    }
 
 
     // Operator stuff
-    const double& operator()(int r, int c) const {
-        return this->values.at(r).at(c);
+    double& operator()(int r, int c) { return this->values.at(r).at(c); }
+    const double& operator()(int r, int c) const { return values.at(r).at(c); }
+
+
+    // Tensor sum 
+    Tensor operator+(const Tensor &tens) {
+        if( rows != tens.shape()[0] || columns != tens.shape()[1])
+            throw std::invalid_argument("Tensors must have the same dimensions.");
+
+        Tensor sum(tens);
+        for(int r = 0; r < tens.shape()[0]; ++r) {
+            for(int c = 0; c < tens.shape()[1]; ++c) {
+                sum(r, c) = sum(r, c) + (*this)(r, c);
+            }
+        }
+
+        return sum;
     }
 
+    // No. of Columns of the 1st Tensor must be = no. of rows of the 2nd Tensor
+    Tensor operator*(const Tensor &tens) {
+        if(this->rows != tens.shape()[0])
+            throw std::invalid_argument("Tensor dimensions not compatible for Tensor multiplication");
+
+        Tensor m(this->rows, tens.shape()[1], false, 0);
+
+        for(int r = 0; r < this->rows; ++r) {  // loop over rows of Tensor 1
+            for(int c = 0; c < tens.shape()[1]; ++c) { // loop over cols of Tensor 2
+                double prod = 0;
+                for(int i = 0; i < this->columns; ++i) {
+                    prod += ((*this)(r, i) * tens(i, c));
+                }
+                m(r, c) = prod;
+            }
+        }
+        return m;
+    }
+
+
+    // Similar to __repr__ in Python
+    // TODO: Work on this:
+
+    // operator std:string() const {
+    //     return "Tensor String"
+    // }
+
 private:
+    int rows;
+    int columns;
+
+    std::vector<std::vector<double>> values;
+
     double genRandom() {
         std::random_device rd;
         std::mt19937 gen(rd());
@@ -146,12 +183,7 @@ private:
         }
     }
 
-    int rows;
-    int columns;
-
-    std::vector<std::vector<double>> values;
-
-};
+}; // Class Tensor
 
 } //namespace ad
 

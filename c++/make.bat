@@ -19,26 +19,19 @@ REM  -g     - adds debugging information to the executable file
 REM  -Wall  - used to turn on most compiler warnings
 set CFLAGS=-g -Wall
 
-set VAR=g++ bi
-set VAR1=g++ djkndj djd djd id
-set VAR2=g++ djkndj djd djd id
-set VAR3=g++ djkndj djd djd id
-set VAR4=g++ djkndj djd djd id
-set VAR5=g++ djkndj djd djd id
-set VAR6=g++ djkndj djd djd id
-set VAR8=g+ djkndj djd djd id
-
 :all
-%COMPILER% %CFLAGS% %CPPSOURCE% -o %TARGET% -I %HSOURCE%
+@REM %COMPILER% %CFLAGS% %CPPSOURCE% -o %TARGET% -I %HSOURCE%
+g++ -g -Wall main.cpp src/*.cpp -o ad -I ./src 
 goto run 
 
 :compile 
-@REM g++ -g -Wall main.cpp src/*.cpp -o ad -I ./src
-%COMPILER% %CFLAGS% %CPPSOURCE% -o %TARGET% -I %HSOURCE%
+g++ -g -Wall main.cpp src/*.cpp -o ad -I ./src
+@REM %COMPILER% %CFLAGS% %CPPSOURCE% -o %TARGET% -I %HSOURCE%
 goto end
 
 :run 
-%TARGET%
+@REM %TARGET%
+ad 
 goto end 
 
 :clean 
@@ -51,7 +44,6 @@ goto end
 
 :help
 @echo "Help"
-
 
 :end 
 popd
