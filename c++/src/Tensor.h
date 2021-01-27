@@ -32,27 +32,26 @@ public:
             _set_tensor(init);
     }
 
-    /**
-     * Copy constructor. Create a new tensor copying the values of the Tensor.
-     */
+    // /**
+    //  * Copy constructor. Create a new tensor copying the values of the Tensor.
+    //  */
 
-    Tensor(const Tensor &tens)
-    {
-        rows = tens.rows;
-        columns = tens.columns;
+    // Tensor(const Tensor &tens)
+    // {
+    //     rows = tens.rows;
+    //     columns = tens.columns;
 
-        for(int r = 0; r < tens.shape()[0]; ++r) {
-            std::vector<double> row;
-            for(int c = 0; c < tens.shape()[1]; ++c) {
-                double x = tens(r, c);
-                row.push_back(tens(r, c));
-            }
-            values.push_back(row);
-        }
-    }
+    //     for(int r = 0; r < tens.shape()[0]; ++r) {
+    //         std::vector<double> row;
+    //         for(int c = 0; c < tens.shape()[1]; ++c) {
+    //             row.push_back(tens(r, c));
+    //         }
+    //         values.push_back(row);
+    //     }
+    // }
 
     // Return shape of the matrix in a vector of ints.
-    std::vector<int> Tensor::shape() const {
+    std::vector<int> shape() {
         return std::vector<int>{rows, columns};
     }
 
@@ -107,11 +106,12 @@ public:
         return this->columns; 
     }
 
+
+
     // Operator stuff
     const double& operator()(int r, int c) const {
         return this->values.at(r).at(c);
     }
-
 
 private:
     double genRandom() {

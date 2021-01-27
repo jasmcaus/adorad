@@ -1,4 +1,3 @@
-@ECHO OFF
 @echo off 
 
 pushd %~dp0
@@ -12,7 +11,7 @@ if "%1" == "clean" goto clean
 
 set COMPILER=g++
 set TARGET=ad
-set CPPSOURCE=main.cpp src/*.cpp
+set CPPSOURCE=main.cpp src/*.cpp 
 set HSOURCE=./src
 REM compiler flags:
 REM  -g     - adds debugging information to the executable file
@@ -29,12 +28,12 @@ set VAR6=g++ djkndj djd djd id
 set VAR8=g+ djkndj djd djd id
 
 :all
-%COMPILER% %CFLAGS% %CPPSOURCE% -o %TARGET% -I %HSOURCE%
-goto run 
+@echo "%COMPILER% %CFLAGS% %CPPSOURCE% -o %TARGET% -I %HSOURCE%"
+goto end 
 
 :compile 
-@REM g++ -g -Wall main.cpp src/*.cpp -o ad -I ./src
-%COMPILER% %CFLAGS% %CPPSOURCE% -o %TARGET% -I %HSOURCE%
+g++ -g -Wall main.cpp src/*.cpp -o ad -I ./src
+@REM %COMPILER% %CFLAGS% %CPPSOURCE% -o %TARGET% -I %HSOURCE%
 goto end
 
 :run 

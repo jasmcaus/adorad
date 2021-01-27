@@ -3,8 +3,8 @@
 
 int main() {
     std::cout << "Hello Tensors!" << std::endl;
-    Tensor *m = new Tensor(3, 2, true);
+    ad::Tensor m(3, 2, true, 0);
 
-    m->print();
+    m.print();
     return 1;
 }
