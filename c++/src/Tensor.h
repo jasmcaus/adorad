@@ -27,8 +27,7 @@ public:
     }
 
     // Create a new tensor copying the values of the original Tensor.
-    Tensor(const Tensor &tens)
-    {
+    Tensor(const Tensor &tens) {
         rows = tens.rows;
         columns = tens.columns;
 
