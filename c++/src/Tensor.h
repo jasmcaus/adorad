@@ -41,6 +41,19 @@ public:
         }
     }
 
+// Create a new matrix given all the values. Shape of the Tensor is infered by the argument.
+    Tensor(std::vector<std::vector<double>> &x) {
+        rows = x.size();
+        columns = x[0].size();
+
+        for(int r = 0; r < rows; ++r) {
+            if(x.at(r).size() != columns)
+                throw std::invalid_argument("Rows must have the same number of columns.");
+            
+            this->values.push_back(x[r]);
+        }
+    }
+
     void print() {
         for(int i = 0; i < this->rows; i++) {
             for(int j = 0; j < this->columns; j++) {
