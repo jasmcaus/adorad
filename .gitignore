@@ -8,3 +8,5 @@ __pycache__/*
 *.exe
 *.out
 *.obj
+
+c++/main.cpp
