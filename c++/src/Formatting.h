@@ -34,11 +34,11 @@ namespace ad {
             int64_t sz;
             std::tie(scale, sz) =  __printFormat(stream, tensor);
             if(scale != 1) {
-            printScale(stream, scale);
+                printScale(stream, scale);
             }
             double* tensp = tensor.data_ptr<double>();
             for(int64_t i = 0; i < tensor.size(0); i++) {
-            stream << std::setw(sz) << tensp[i]/scale << std::endl;
+                stream << std::setw(sz) << tensp[i]/scale << std::endl;
             }
         }
         stream << "[ " << tens.toString() << "{" << tensor.size(0) << "}";
