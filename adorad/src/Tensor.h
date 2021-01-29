@@ -1,5 +1,4 @@
-#ifndef _TENSOR_H
-#define _TENSOR_H 
+#pragma once 
 
 #include <vector>
 #include <random>
@@ -174,7 +173,7 @@ public:
     }
 
     const long numel() const { return this->numelem; }
-    const int ndimen() const { return this-> ndimen; }
+    const int ndimen() const { return this->ndim; }
     const int mode() const { return this-> mode; }
 
 private:
@@ -218,6 +217,3 @@ private:
 }; // Class Tensor
 
 } //namespace ad
-
-
-#endif // _TENSOR_H

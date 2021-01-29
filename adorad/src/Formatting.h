@@ -1,5 +1,4 @@
-#ifndef _FORMATTING_H
-#define _FORMATTING_H 
+#pragma once 
 
 #include "Tensor.h"
 
@@ -59,11 +58,11 @@ namespace ad {
         }
         if (tens.is_quantized()) {
         stream << ", qscheme: " << toString(tens.qscheme());
-        if (tens.qscheme() == c10::kPerTensorAffine) {
+        if (tens.qscheme() == coreten::kPerTensorAffine) {
             stream << ", scale: " << tens.q_scale();
             stream << ", zero_point: " << tens.q_zero_point();
-        } else if (tens.qscheme() == c10::kPerChannelAffine ||
-            tens.qscheme() == c10::kPerChannelAffineFloatQParams) {
+        } else if (tens.qscheme() == coreten::kPerChannelAffine ||
+            tens.qscheme() == coreten::kPerChannelAffineFloatQParams) {
             stream << ", scales: ";
             Tensor scales = tens.q_per_channel_scales();
             print(stream, scales, linesize);
@@ -86,6 +85,3 @@ namespace ad {
 
 
 } //namespace ad 
-
-#endif // _FORMATTING_H
-
