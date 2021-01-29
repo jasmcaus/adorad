@@ -12,9 +12,14 @@ class Tensor {
 public:
     const int ndim = 2; // 2D Tensor 
     const long numelem = rows*columns;
-    int sci_mode = 1; //sci-mode for now
+    const int sci_mode = 1; //sci-mode for now
 
-    Tensor(int rows, int columns, bool isRandom, double init=0){
+    const long numel() const { return this->numelem; }
+    const int ndimen() const { return this->ndim; }
+    const int mode() const { return this->sci_mode; }
+
+
+    Tensor(int rows, int columns, bool isRandom, double init=0.0){
         if(rows == 0 || columns == 0) 
             throw std::invalid_argument("Tensor dimensions cannot be zero.");
 
@@ -22,10 +27,11 @@ public:
         this->columns = columns;
 
         if(isRandom)
-            _set_random_tensor();
+            __set_random_tensor();
         else
-            _set_tensor(init);
+            __set_tensor(init);
     }
+
 
     // Create a new tensor copying the values of the original Tensor.
     Tensor(const Tensor &tens) {
@@ -41,7 +47,8 @@ public:
         }
     }
 
-// Create a new matrix given all the values. Shape of the Tensor is infered by the argument.
+
+    // Create a new Tensor given all the values. Shape of the Tensor is infered by the argument.
     Tensor(std::vector<std::vector<double>> &x) {
         rows = x.size();
         columns = x[0].size();
@@ -54,6 +61,7 @@ public:
         }
     }
 
+    // Pretty print is implemented in Formatting.h 
     void print() {
         for(int i = 0; i < this->rows; i++) {
             for(int j = 0; j < this->columns; j++) {
@@ -63,19 +71,18 @@ public:
         }
     }
 
-    // Return shape of the matrix in a vector of ints.
-    std::vector<int> shape() const { return std::vector<int>{rows, columns}; }
 
-    std::vector<std::vector<double>> getTensorValues() { return this->values; }
+    // Return shape of the matrix in a vector of ints.
+    std::vector<int> shape() const { 
+        return std::vector<int>{rows, columns}; 
+    }
+
+    std::vector<std::vector<double>> getTensorValues() { 
+        return this->values; 
+    }
 
     int getNumRows() { return this->rows; }
     int getNumCols() { return this->columns; }
-
-    // Only to be used internally
-    void _setVal(int rows, int columns, int val) { this->values.at(rows).at(columns) = val; }
-    
-    // Only to be used internally
-    int _getVal(int rows, int columns) {return this->values.at(rows).at(columns); }
 
 
     // Find the sum of two Tensors 
@@ -113,8 +120,12 @@ public:
 
 
     // Operator stuff
-    double& operator()(int r, int c) { return this->values.at(r).at(c); }
-    const double& operator()(int r, int c) const { return values.at(r).at(c); }
+    double& operator()(int r, int c) { 
+        return this->values.at(r).at(c); 
+    }
+    const double& operator()(int r, int c) const { 
+        return values.at(r).at(c); 
+    }
 
 
     // Tensor sum 
@@ -171,10 +182,15 @@ public:
         
     //     return base_str;
     // }
+    
+    // Only to be used internally
+    void _setVal(int rows, int columns, int val) { 
+        this->values.at(rows).at(columns) = val; 
+    }
 
-    const long numel() const { return this->numelem; }
-    const int ndimen() const { return this->ndim; }
-    int mode() const { return this->sci_mode; }
+    int _getVal(int rows, int columns) {
+        return this->values.at(rows).at(columns); 
+    }
 
 private:
     int rows;
@@ -189,7 +205,7 @@ private:
         return dis(gen);
     }
 
-    void _set_tensor(double init) {
+    void __set_tensor(double init) {
         for(int i=0; i<rows; i++) {
             std::vector<double> colValues;
 
@@ -201,7 +217,7 @@ private:
         }
     }
 
-    void _set_random_tensor() {
+    void __set_random_tensor() {
         std::default_random_engine generator;
         std::uniform_real_distribution<double> distribution(0, 1);
 
