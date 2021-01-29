@@ -49,5 +49,5 @@ run:
 
 
 clean: 
-	rmdir -r $(BUILD_DIR)
+	@rmdir /Q /s $(BUILD_DIR) && mkdir $(BUILD_DIR)
 .PHONY: clean

@@ -88,5 +88,3 @@ Tensor reveye(unsigned int dim) {
 }
 
 } //namespace ad 
-
-#endif // _FUNCS_H

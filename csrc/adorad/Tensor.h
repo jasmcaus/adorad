@@ -12,7 +12,7 @@ class Tensor {
 public:
     const int ndim = 2; // 2D Tensor 
     const long numelem = rows*columns;
-    const int mode = 1; //sci-mode for now
+    int sci_mode = 1; //sci-mode for now
 
     Tensor(int rows, int columns, bool isRandom, double init=0){
         if(rows == 0 || columns == 0) 
@@ -160,21 +160,21 @@ public:
     // }
 
 
-    std::string toString() const {
-        std::string base_str;
+    // std::string toString() const {
+    //     std::string base_str;
 
-        if (scalar_type() == ScalarType::Undefined) { 
-            base_str = "UndefinedType"; 
-        } else { 
-            base_str = std::string(ad::toString(options().backend())) + ad::toString(scalar_type()) + "Type";  
-        }
+    //     if (scalar_type() == ScalarType::Undefined) { 
+    //         base_str = "UndefinedType"; 
+    //     } else { 
+    //         base_str = std::string(ad::toString(options().backend())) + ad::toString(scalar_type()) + "Type";  
+    //     }
         
-        return base_str;
-    }
+    //     return base_str;
+    // }
 
     const long numel() const { return this->numelem; }
     const int ndimen() const { return this->ndim; }
-    const int mode() const { return this-> mode; }
+    int mode() const { return this->sci_mode; }
 
 private:
     int rows;

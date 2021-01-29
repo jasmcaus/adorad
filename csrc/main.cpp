@@ -1,5 +1,5 @@
-#include "src/Tensor.h"
-#include "src/TensorFuncs.h"
+#include "adorad/Tensor.h"
+#include "adorad/TensorFuncs.h"
 #include <iostream>
 
 
