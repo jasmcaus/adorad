@@ -1,0 +1,1 @@
+set(the_description "The Core Functionality of Adorad")
