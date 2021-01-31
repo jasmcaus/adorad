@@ -1,0 +1,4 @@
+sin/arcsin gans
+
+The sinmlp paper showed that sin can be useful activation in neural nets.
+I wonder if using sin as activaiton in the generator and arcsin as activation in the discriminator would work?
