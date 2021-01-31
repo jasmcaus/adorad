@@ -1,0 +1,21 @@
+# Boost.Autodiff
+#
+# Copyright (c) 2018-2019 Matthew Pulver
+#
+# Use, modification and distribution is subject to the Boost Software License,
+# Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+import testing ;
+import ../../config/checks/config : requires ;
+
+test-suite autodiff_tests
+    :   [ run test_autodiff_1.cpp ]
+        [ run test_autodiff_2.cpp ]
+        [ run test_autodiff_3.cpp ]
+        [ run test_autodiff_4.cpp ]
+        [ run test_autodiff_5.cpp ]
+        [ run test_autodiff_6.cpp ]
+        [ run test_autodiff_7.cpp ]
+        [ run test_autodiff_8.cpp ]
+    ;
