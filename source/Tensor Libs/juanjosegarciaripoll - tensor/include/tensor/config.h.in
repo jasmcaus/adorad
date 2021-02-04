@@ -1,0 +1,32 @@
+// -*- mode: c++; fill-column: 80; c-basic-offset: 2; indent-tabs-mode: nil -*-
+//
+// Copyright 2008, Juan Jose Garcia-Ripoll
+//
+
+#ifndef TENSOR_CONFIG_H
+#define TENSOR_CONFIG_H
+
+#undef TENSOR_USE_ATLAS
+#undef TENSOR_USE_OPENBLAS
+#undef TENSOR_USE_VECLIB
+#undef TENSOR_USE_LAPACK
+#undef TENSOR_USE_MKL
+#undef TENSOR_USE_ACML
+#undef TENSOR_USE_ESSL
+#undef TENSOR_USE_CBLAPACK
+#undef TENSOR_USE_FFTW3
+#undef HAVE_CBLAS_H
+#undef HAVE_ATLAS_CBLAS_H
+#undef HAVE_VECLIB_CBLAS_H
+#undef HAVE_ACCELERATE_ACCELERATE_H
+#undef HAVE_DLADDR
+#undef HAVE_BACKTRACE
+#undef HAVE_BACKTRACE_SYMBOLS
+#undef HAVE___BUILTIN_RETURN_ADDRESS
+#undef HAVE_GETTIMEOFDAY
+#undef TENSOR_BIGENDIAN
+#undef F77_FUNC
+
+#undef TENSOR_64BITS
+
+#endif // !TENSOR_CONFIG_H

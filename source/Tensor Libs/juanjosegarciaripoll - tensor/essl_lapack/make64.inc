@@ -1,0 +1,13 @@
+PLAT = _essl64
+FORTRAN = xlf_r -q64 -qnosave
+OPTS = -O
+DRVOPTS  = $(OPTS)
+NOOPT    =
+LOADER   = $(FORTRAN)
+LOADOPTS = $(OPTS)
+TIMER    = EXT_ETIME_
+ARCH     = ar
+ARCHFLAGS= cr
+RANLIB   = ranlib
+BLASLIB      = -lessl64
+LAPACKLIB    = liblapack$(PLAT).a
