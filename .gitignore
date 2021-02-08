@@ -10,6 +10,7 @@ __pycache__/*
 *.obj
 
 csrc/build
+assert/*
 torch-test/*
 oldmake.bat
 main.cpp
