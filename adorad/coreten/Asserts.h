@@ -4,6 +4,7 @@
 #define CORETEN_ASSERT_VOID
 #define CORETEN_ASSERT_PTR
 
+#include "macros/Macros.h"
 #include <cstddef>
 #include <exception>
 #include <string>
@@ -12,7 +13,6 @@
 #if defined(_MSC_VER) && _MSC_VER <= 1900
 #define __func__ __FUNCTION__
 #endif
-
 
 namespace coreten {
 
