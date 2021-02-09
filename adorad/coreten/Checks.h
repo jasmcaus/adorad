@@ -149,8 +149,6 @@ inline std::string if_empty(const std::string& x, const std::string& y) {
 
 
 
-// Private helper macro for implementing TORCH_INTERNAL_ASSERT and TORCH_CHECK
-//
 // Note: In the debug build With MSVC, __LINE__ might be of long type (a.k.a int32_t),
 // which is different from the definition of `SourceLocation` that requires
 // unsigned int (a.k.a uint32_t) and may cause a compile error with the message:

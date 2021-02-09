@@ -58,7 +58,7 @@ template<>
 };
 
 
-// For coreten::string::listr() with an empty argument list (which is common in our assert macros),
+// For coreten::listr() with an empty argument list (which is common in our assert macros),
 // we don't want to pay the binary size for constructing and destructing a stringstream
 // or even constructing a string. Let's just return a reference to an empty string.
 template<>
