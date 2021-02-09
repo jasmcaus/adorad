@@ -1,3 +1,0 @@
-#!/bin/sh
-make doxygen-doc && \
-rsync -rauvz --delete doc/html dreamhost:tream.dreamhosters.com/tensor/

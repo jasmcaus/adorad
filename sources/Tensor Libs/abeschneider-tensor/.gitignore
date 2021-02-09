@@ -1,7 +1,0 @@
-/build/*
-.vscode/*
-/docs/_build
-/docs/_templates
-/docs/_static
-/docs/doxyoutput
-/docs/api
