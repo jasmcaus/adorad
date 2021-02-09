@@ -1,9 +1,0 @@
-{
-    "key": "math/differentiation/autodiff",
-    "name": "Boost.Autodiff",
-    "authors": [ "Matthew Pulver" ],
-    "maintainers": [ "Matthew Pulver <mpulver -at- unitytechgroup -dot- com>" ],
-    "description": "Automatic Differentiation Library",
-    "std": [ "proposal" ],
-    "category": [ "Math" ]
-}

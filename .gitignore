@@ -17,8 +17,3 @@ torch-test/*
 oldmake.bat
 main.cpp
 test.cpp 
-
-extern-sources/Autodiff/autodiff 
-extern-sources/Autodiff/autodiff-autodiff 
-extern-sources/Autodiff/coin-or-CppAD
-extern-sources/Autodiff/geotz-autodiff
