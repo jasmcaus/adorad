@@ -5,12 +5,15 @@ adorad.egg-info/*
 *.pyc
 __pycache__/*
 .vscode/*
+.vs/*
 *.exe
 *.out
 *.obj
 
 csrc/build
+out/*
 assert/*
 torch-test/*
 oldmake.bat
 main.cpp
+test.cpp 

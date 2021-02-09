@@ -1,7 +1,10 @@
 #pragma once 
 
+#include <string> 
+#include <cstddef> // for size_t
+
 namespace coreten {
-namespace detail {
+namespace string {
 
 template <typename T>
 struct CanonicalizeStrTypes {
@@ -55,7 +58,7 @@ template<>
 };
 
 
-// For c10::str() with an empty argument list (which is common in our assert macros),
+// For coreten::string::listr() with an empty argument list (which is common in our assert macros),
 // we don't want to pay the binary size for constructing and destructing a stringstream
 // or even constructing a string. Let's just return a reference to an empty string.
 template<>
@@ -66,12 +69,12 @@ struct _str_wrapper<> final {
     }
 };
 
-} // namespace detail
-
+} // namespace string
 
 // Convert a list of string-like arguments into a single string.
 template <typename... Args>
-inline decltype(auto) str(const Args&... args) {
-  return detail::_str_wrapper<typename detail::CanonicalizeStrTypes<Args>::type...>::call(args...);
+inline decltype(auto) listr(const Args&... args) {
+    return string::_str_wrapper<typename string::CanonicalizeStrTypes<Args>::type...>::call(args...);
 }
-}
+
+} //namespace coreten 

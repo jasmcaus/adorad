@@ -4,7 +4,7 @@
 #define CORETEN_ASSERT_VOID
 #define CORETEN_ASSERT_PTR
 
-#include "macros/Macros.h"
+#include "adorad/coreten/macros/Macros.h"
 #include <cstddef>
 #include <exception>
 #include <string>
@@ -13,6 +13,7 @@
 #if defined(_MSC_VER) && _MSC_VER <= 1900
 #define __func__ __FUNCTION__
 #endif
+
 
 namespace coreten {
 
@@ -114,22 +115,22 @@ inline std::string if_empty(const std::string& x, const std::string& y) {
 
 
 #define CORETEN_CHECK_MSG(cond, type, ...)                              \
-    ::coreten::detail::if_empty(                                       \
-        ::coreten::str(__VA_ARGS__),                                        \
+    ::coreten::detail::if_empty(                                        \
+        ::coreten::listr(__VA_ARGS__),                                  \
         "Expected " #cond " to be true, but got false.  "               \
     )
 
 #define CORETEN_CHECK_WITH_MSG(error_t, cond, type, ...)                \
-    if (CORETEN_UNLIKELY_OR_CONST(!(cond))) {                               \
+    if (CORETEN_UNLIKELY_OR_CONST(!(cond))) {                           \
         CORETEN_THROW_ERROR(error_t, CORETEN_CHECK_MSG(cond, type, __VA_ARGS__)); \
     }
 
 
 #define CORETEN_CHECK(cond, ...)                                          \
-    if (CORETEN_UNLIKELY_OR_CONST(!(cond))) {                                 \
-        ::coreten::detail::coretenCheckFail(                                      \
-            __func__, __FILE__, static_cast<uint32_t>(__LINE__),            \
-            CORETEN_CHECK_MSG(cond, "", __VA_ARGS__));                        \
+    if (CORETEN_UNLIKELY_OR_CONST(!(cond))) {                             \
+        ::coreten::detail::coretenCheckFail(                              \
+            __func__, __FILE__, static_cast<uint32_t>(__LINE__),          \
+            CORETEN_CHECK_MSG(cond, "", __VA_ARGS__));                    \
     }
 
 
