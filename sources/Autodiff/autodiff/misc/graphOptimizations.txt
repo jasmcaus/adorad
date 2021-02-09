@@ -1,0 +1,16 @@
+- Matrix associativity optimization? :)
+
+- Could add transpose and reshape parameters to certain nodes just to reduce uneccessary memory duplication
+
+- Certian nodes can be applied in place automatically or upon request
+
+- Nodes should have a getValue function that returns a reference to some xarray, then maybe some memory optimizations can be done?
+
+- Somehow prevent grad (and recompute() in Module::forward()) from being computed on constant nodes and subgraphs
+
+- Could parallelize computation in the graph probably
+
+- I probably will not do these things though. Too much work for a toy project like this.
+  Many more optimizations are described in the theano documentation.
+
+

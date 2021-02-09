@@ -1,0 +1,21 @@
+// struct ImageDialateNode : Node {
+//     int stride;
+//     int outHeight;
+//     int outWidth;
+//     ImageDialateNode(const vector<shared_ptr<Node>>& children, int stride) : Node(children), stride(stride) {
+//         auto shape = c[0]->value.shape();
+//         const int inHeight = shape[2];
+//         const int inWidth = shape[3];
+//         outHeight = stride * (inHeight - 1) + 1;
+//         outWidth = stride * (inWidth - 1) + 1;
+//         shape[2] = outHeight;
+//         shape[3] = outHeight;
+//         value = xt::zeros<double>(shape);
+//     }
+//     virtual void forward() {
+//         xt::view(value, xt::all(), xt::all(), xt::range(0, outHeight, stride), xt::range(0, outWidth, stride)) = c[0]->value;
+//     }
+//     virtual void backward() {
+//         c[0]->grad += xt::view(grad, xt::all(), xt::all(), xt::range(0, outHeight, stride), xt::range(0, outWidth, stride));
+//     }
+// };

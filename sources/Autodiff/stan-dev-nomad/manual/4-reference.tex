@@ -1,0 +1,476 @@
+\chapter{Nomad Reference Guide} \label{chap:reference_guide}
+
+\section{Linear Differential Operations} \label{sec:differential_operations}
+
+\subsection{Zeroth-Order Methods}
+
+This methods requires a functor implementing
+%
+\begin{verbatim}
+double operator()(const Eigen::VectorXd& x) const
+\end{verbatim}
+
+\begin{tcolorbox}[colback=white,colframe=gray90, coltitle=black,boxrule=3pt,
+fonttitle=\bfseries,title=Finite Difference Gradient]
+
+\begin{tabular}{llll}
+\textit{I/O} & \textit{Type} & \textit{Parameter} & \textit{Description} \\
+Input & \texttt{const F\&} & \texttt{f} & Functor Implementation \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{x} & Input Values \\
+Output & \texttt{Eigen::VectorXd\&} & \texttt{g} & Gradient \\
+Input & \texttt{const double} & \texttt{epsilon} & Finite Difference Perturbation
+\end{tabular}
+
+\vspace{5mm}
+
+\begin{verbatim}
+  template <typename F>
+  void finite_diff_gradient(const F& f,
+                            const Eigen::VectorXd& x,
+                            Eigen::VectorXd& g,
+                            const double epsilon = 1e-6)
+\end{verbatim}
+
+\end{tcolorbox}
+
+\subsection{First-Order Methods}
+
+These methods require a functor implementing
+%
+\begin{verbatim}
+var<1U> operator()(const Eigen::VectorXd& x) const
+\end{verbatim}
+
+\begin{tcolorbox}[colback=white,colframe=gray90, coltitle=black,boxrule=3pt,
+fonttitle=\bfseries,title=Gradient]
+
+\begin{tabular}{llll}
+\textit{I/O} & \textit{Type} & \textit{Parameter} & \textit{Description} \\
+Input & \texttt{const F\&} & \texttt{f} & Functor Implementation \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{x} & Input Values \\
+Output & \texttt{Eigen::VectorXd\&} & \texttt{g} & Gradient
+\end{tabular}
+
+\vspace{5mm}
+
+\begin{verbatim}
+  template <typename F>
+  void gradient(const F& f,
+                const Eigen::VectorXd& x,
+                Eigen::VectorXd& g)
+\end{verbatim}
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=white,colframe=gray90, coltitle=black,boxrule=3pt,
+fonttitle=\bfseries,title=Gradient]
+
+\begin{tabular}{llll}
+\textit{I/O} & \textit{Type} & \textit{Parameter} & \textit{Description} \\
+Input & \texttt{const F\&} & \texttt{f} & Functor Implementation \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{x} & Input Values \\
+Output & \texttt{double\&} & \texttt{fx} & Function Value \\
+Output & \texttt{Eigen::VectorXd\&} & \texttt{g} & Gradient
+\end{tabular}
+
+\vspace{5mm}
+
+\begin{verbatim}
+  template <typename F>
+  void gradient(const F& f,
+                const Eigen::VectorXd& x,
+                double& fx,
+                Eigen::VectorXd& g)
+\end{verbatim}
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=white,colframe=gray90, coltitle=black,boxrule=3pt,
+fonttitle=\bfseries,title=Directional Derivative]
+
+\begin{tabular}{llll}
+\textit{I/O} & \textit{Type} & \textit{Parameter} & \textit{Description} \\
+Input & \texttt{const F\&} & \texttt{f} & Functor Implementation \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{x} & Input Values \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{v} & Input Direction \\
+Output & \texttt{double\&} & \texttt{g} & Directional Derivative
+\end{tabular}
+
+\vspace{5mm}
+
+\begin{verbatim}
+  template <typename F>
+  void gradient_dot_vector(const F& f,
+                           const Eigen::VectorXd& x,
+                           const Eigen::VectorXd& v,
+                           double& grad_dot_v)
+\end{verbatim}
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=white,colframe=gray90, coltitle=black,boxrule=3pt,
+fonttitle=\bfseries,title=Directional Derivative]
+
+\begin{tabular}{llll}
+\textit{I/O} & \textit{Type} & \textit{Parameter} & \textit{Description} \\
+Input & \texttt{const F\&} & \texttt{f} & Functor Implementation \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{x} & Input Values \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{v} & Input Direction \\
+Output & \texttt{double\&} & \texttt{f} & Function Value \\
+Output & \texttt{double\&} & \texttt{g} & Directional Derivative
+\end{tabular}
+
+\vspace{5mm}
+
+\begin{verbatim}
+  template <typename F>
+  void gradient_dot_vector(const F& f,
+                           const Eigen::VectorXd& x,
+                           const Eigen::VectorXd& v,
+                           double& f,
+                           double& grad_dot_v)
+\end{verbatim}
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=white,colframe=gray90, coltitle=black,boxrule=3pt,
+fonttitle=\bfseries,title=Finite Difference Hessian]
+
+\begin{tabular}{llll}
+\textit{I/O} & \textit{Type} & \textit{Parameter} & \textit{Description} \\
+Input & \texttt{const F\&} & \texttt{f} & Functor Implementation \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{x} & Input Values \\
+Output & \texttt{const Eigen::MatrixXd\&} & \texttt{H} & Hessian \\
+Output & \texttt{const double} & \texttt{epsilon} & Finite Difference Perturbation
+\end{tabular}
+
+\vspace{5mm}
+
+\begin{verbatim}
+  template <typename F>
+  void finite_diff_hessian(const F& f,
+                           const Eigen::VectorXd& x,
+                           Eigen::MatrixXd& H,
+                           const double epsilon = 1e-6)
+\end{verbatim}
+
+\end{tcolorbox}
+
+\subsection{Second-Order Methods}
+
+These methods require a functor implementing
+%
+\begin{verbatim}
+var<2U> operator()(const Eigen::VectorXd& x) const
+\end{verbatim}
+
+\begin{tcolorbox}[colback=white,colframe=gray90, coltitle=black,boxrule=3pt,
+fonttitle=\bfseries,title=Hessian]
+
+\begin{tabular}{llll}
+\textit{I/O} & \textit{Type} & \textit{Parameter} & \textit{Description} \\
+Input & \texttt{const F\&} & \texttt{f} & Functor Implementation \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{x} & Input Values \\
+Output & \texttt{const Eigen::MatrixXd\&} & \texttt{H} & Hessian
+\end{tabular}
+
+\vspace{5mm}
+
+\begin{verbatim}
+  template <typename F>
+  void hessian(const F& f,
+               const Eigen::VectorXd& x,
+               Eigen::MatrixXd& H)
+\end{verbatim}
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=white,colframe=gray90, coltitle=black,boxrule=3pt,
+fonttitle=\bfseries,title=Hessian]
+
+\begin{tabular}{llll}
+\textit{I/O} & \textit{Type} & \textit{Parameter} & \textit{Description} \\
+Input & \texttt{const F\&} & \texttt{f} & Functor Implementation \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{x} & Input Values \\
+Output & \texttt{double\&} & \texttt{f} & Function Value \\
+Output & \texttt{double\&} & \texttt{g} & Gradient \\
+Output & \texttt{const Eigen::MatrixXd\&} & \texttt{H} & Hessian
+\end{tabular}
+
+\vspace{5mm}
+
+\begin{verbatim}
+  template <typename F>
+  void hessian(const F& f,
+               const Eigen::VectorXd& x,
+               double& f,
+               Eigen::VectorXd& g,
+               Eigen::MatrixXd& H)
+\end{verbatim}
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=white,colframe=gray90, coltitle=black,boxrule=3pt,
+fonttitle=\bfseries,title=Hessian-Vector Product]
+
+\begin{tabular}{llll}
+\textit{I/O} & \textit{Type} & \textit{Parameter} & \textit{Description} \\
+Input & \texttt{const F\&} & \texttt{f} & Functor Implementation \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{x} & Input Values \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{v} & Input Direction \\
+Output & \texttt{const Eigen::VectorXd\&} & \texttt{H} & Hessian-Vector Product
+\end{tabular}
+
+\vspace{5mm}
+
+\begin{verbatim}
+  template <typename F>
+  void hessian_dot_vector(const F& f,
+                          const Eigen::VectorXd& x,
+                          const Eigen::VectorXd& v,
+                          Eigen::VectorXd& hessian_dot_v)
+\end{verbatim}
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=white,colframe=gray90, coltitle=black,boxrule=3pt,
+fonttitle=\bfseries,title=Hessian-Vector Product]
+
+\begin{tabular}{llll}
+\textit{I/O} & \textit{Type} & \textit{Parameter} & \textit{Description} \\
+Input & \texttt{const F\&} & \texttt{f} & Functor Implementation \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{x} & Input Values \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{v} & Input Direction \\
+Output & \texttt{double\&} & \texttt{f} & Function Value \\
+Output & \texttt{double\&} & \texttt{g} & Gradient \\
+Output & \texttt{const Eigen::VectorXd\&} & \texttt{H} & Hessian-Vector Product
+\end{tabular}
+
+\vspace{5mm}
+
+\begin{verbatim}
+  template <typename F>
+  void hessian_dot_vector(const F& f,
+                          const Eigen::VectorXd& x,
+                          const Eigen::VectorXd& v,
+                          double& f,
+                          Eigen::VectorXd& g,
+                          Eigen::VectorXd& hessian_dot_v)
+\end{verbatim}
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=white,colframe=gray90, coltitle=black,boxrule=3pt,
+fonttitle=\bfseries,title=Trace of Matrix-Hessian Product]
+
+\begin{tabular}{llll}
+\textit{I/O} & \textit{Type} & \textit{Parameter} & \textit{Description} \\
+Input & \texttt{const F\&} & \texttt{f} & Functor Implementation \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{x} & Input Values \\
+Input & \texttt{const Eigen::MatrixXd\&} & \texttt{M} & Input Matrix \\
+Output & \texttt{double\&} & \texttt{H} & Trace of Matrix-Hessian Product
+\end{tabular}
+
+\vspace{5mm}
+
+\begin{verbatim}
+  template <typename F>
+  void trace_matrix_times_hessian(const F& f,
+                                  const Eigen::VectorXd& x,
+                                  const Eigen::MatrixXd& M,
+                                  double& trace_m_times_h)
+\end{verbatim}
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=white,colframe=gray90, coltitle=black,boxrule=3pt,
+fonttitle=\bfseries,title=Trace of Matrix-Hessian Product]
+
+\begin{tabular}{llll}
+\textit{I/O} & \textit{Type} & \textit{Parameter} & \textit{Description} \\
+Input & \texttt{const F\&} & \texttt{f} & Functor Implementation \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{x} & Input Values \\
+Input & \texttt{const Eigen::MatrixXd\&} & \texttt{M} & Input Matrix \\
+Output & \texttt{double\&} & \texttt{f} & Function Value \\
+Output & \texttt{double\&} & \texttt{g} & Gradient \\
+Output & \texttt{double\&} & \texttt{H} & Trace of Matrix-Hessian Product
+\end{tabular}
+
+\vspace{5mm}
+
+\begin{verbatim}
+  template <typename F>
+  void trace_matrix_times_hessian(const F& f,
+                                  const Eigen::VectorXd& x,
+                                  const Eigen::MatrixXd& M,
+                                  double& f,
+                                  Eigen::VectorXd& g,
+                                  double& trace_m_times_h)
+\end{verbatim}
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=white,colframe=gray90, coltitle=black,boxrule=3pt,
+fonttitle=\bfseries,title=Finite Difference Hessian Gradient]
+
+\begin{tabular}{llll}
+\textit{I/O} & \textit{Type} & \textit{Parameter} & \textit{Description} \\
+Input & \texttt{const F\&} & \texttt{f} & Functor Implementation \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{x} & Input Values \\
+Output & \texttt{const Eigen::MatrixXd\&} & \texttt{grad\_H} & Hessian Gradient \\
+Output & \texttt{const double} & \texttt{epsilon} & Finite Difference Perturbation
+\end{tabular}
+
+\vspace{5mm}
+
+\begin{verbatim}
+  template <typename F>
+  void finite_diff_grad_hessian(const F& f,
+                                const Eigen::VectorXd& x,
+                                Eigen::MatrixXd& grad_H,
+                                const double epsilon = 1e-6)
+\end{verbatim}
+
+\vspace{5mm}
+
+The Hessian gradient is stored in a $N \times N^{2}$ matrix, with the $i$th
+$N \times N$ block giving the gradient of the Hessian with respect to the
+$i$th input parameter.
+
+\end{tcolorbox}
+
+\subsection{Third-Order Methods}
+
+These methods require a functor implementing
+%
+\begin{verbatim}
+var<3U> operator()(const Eigen::VectorXd& x) const
+\end{verbatim}
+
+\begin{tcolorbox}[colback=white,colframe=gray90, coltitle=black,boxrule=3pt,
+fonttitle=\bfseries,title=Hessian Gradient]
+
+\begin{tabular}{llll}
+\textit{I/O} & \textit{Type} & \textit{Parameter} & \textit{Description} \\
+Input & \texttt{const F\&} & \texttt{f} & Functor Implementation \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{x} & Input Values \\
+Output & \texttt{const Eigen::MatrixXd\&} & \texttt{grad\_H} & Hessian Gradient \\
+\end{tabular}
+
+\vspace{5mm}
+
+\begin{verbatim}
+  template <typename F>
+  void grad_hessian(const F& f,
+                    const Eigen::VectorXd& x,
+                    Eigen::MatrixXd& grad_H)
+\end{verbatim}
+
+\vspace{5mm}
+
+The Hessian gradient is stored in a $N \times N^{2}$ matrix, with the $i$th
+$N \times N$ block giving the gradient of the Hessian with respect to the
+$i$th input parameter.
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=white,colframe=gray90, coltitle=black,boxrule=3pt,
+fonttitle=\bfseries,title=Hessian Gradient]
+
+\begin{tabular}{llll}
+\textit{I/O} & \textit{Type} & \textit{Parameter} & \textit{Description} \\
+Input & \texttt{const F\&} & \texttt{f} & Functor Implementation \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{x} & Input Values \\
+Output & \texttt{double\&} & \texttt{f} & Function Value \\
+Output & \texttt{double\&} & \texttt{g} & Gradient \\
+Output & \texttt{const Eigen::MatrixXd\&} & \texttt{H} & Hessian \\
+Output & \texttt{const Eigen::MatrixXd\&} & \texttt{grad\_H} & Hessian Gradient \\
+\end{tabular}
+
+\vspace{5mm}
+
+\begin{verbatim}
+  template <typename F>
+  void grad_hessian(const F& f,
+                    const Eigen::VectorXd& x,
+                    double& f,
+                    Eigen::VectorXd& g,
+                    Eigen::MatrixXd& H,
+                    Eigen::MatrixXd& grad_H)
+\end{verbatim}
+
+\vspace{5mm}
+
+The Hessian gradient is stored in a $N \times N^{2}$ matrix, with the $i$th
+$N \times N$ block giving the gradient of the Hessian with respect to the
+$i$th input parameter.
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=white,colframe=gray90, coltitle=black,boxrule=3pt,
+fonttitle=\bfseries,title=Gradient of Trace of Matrix-Hessian Product]
+
+\begin{tabular}{llll}
+\textit{I/O} & \textit{Type} & \textit{Parameter} & \textit{Description} \\
+Input & \texttt{const F\&} & \texttt{f} & Functor Implementation \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{x} & Input Values \\
+Input & \texttt{const Eigen::MatrixXd\&} & \texttt{M} & Input Matrix \\
+Output & \texttt{const Eigen::VectorXd\&} & \texttt{grad\_trace\_m\_times\_h} 
+& Gradient of Trace of Matrix-Hessian Product
+\end{tabular}
+
+\vspace{5mm}
+
+\begin{verbatim}
+  template <typename F>
+  void grad_trace_matrix_times_hessian(const F& f,
+                                       const Eigen::VectorXd& x,
+                                       const Eigen::MatrixXd& M,
+                                       Eigen::VectorXd& grad_trace_m_times_h)
+\end{verbatim}
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=white,colframe=gray90, coltitle=black,boxrule=3pt,
+fonttitle=\bfseries,title=Gradient of Trace of Matrix-Hessian Product]
+
+\begin{tabular}{llll}
+\textit{I/O} & \textit{Type} & \textit{Parameter} & \textit{Description} \\
+Input & \texttt{const F\&} & \texttt{f} & Functor Implementation \\
+Input & \texttt{const Eigen::VectorXd\&} & \texttt{x} & Input Values \\
+Input & \texttt{const Eigen::MatrixXd\&} & \texttt{M} & Input Matrix \\
+Output & \texttt{double\&} & \texttt{f} & Function Value \\
+Output & \texttt{double\&} & \texttt{g} & Gradient \\
+Output & \texttt{const Eigen::MatrixXd\&} & \texttt{H} & Hessian \\
+Output & \texttt{const Eigen::VectorXd\&} & \texttt{grad\_trace\_m\_times\_h} 
+& Gradient of Trace of Matrix-Hessian Product
+\end{tabular}
+
+\vspace{5mm}
+
+\begin{verbatim}
+  template <typename F>
+  void grad_trace_matrix_times_hessian(const F& f,
+                                       const Eigen::VectorXd& x,
+                                       const Eigen::MatrixXd& M,
+                                       double& f,
+                                       Eigen::VectorXd& g,
+                                       Eigen::MatrixXd& H,
+                                       Eigen::VectorXd& grad_trace_m_times_h)
+\end{verbatim}
+
+\end{tcolorbox}
+
+\section{Implemented Operators and Functions} \label{sec:operators_and_functions}
+
+\subsection{Smooth Functions}
+\input{4-reference-smooth_functions.tex}
+
+\subsection{Non-Smooth Functions}
+\input{4-reference-nonsmooth_functions.tex}
+
+\subsection{Smooth Operators}
+\input{4-reference-smooth_operators.tex}
+
+\subsection{Non-Smooth Functions}
+\input{4-reference-nonsmooth_operators.tex}
