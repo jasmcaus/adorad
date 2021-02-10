@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
 
-# Every project needs a name.
-project(ad)
+project(ad CXX)
 
 file(GLOB SOURCES "adorad/*.cpp")
 
