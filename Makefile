@@ -51,3 +51,16 @@ run:
 clean: 
 	@rmdir /Q /s $(BUILD_DIR) && mkdir $(BUILD_DIR)
 .PHONY: clean
+
+
+# ------------Minor Testing only -----------
+COMPILER = g++
+CPPSOURCE = test.cpp
+# compiler flags:
+#  -g     - adds debugging information to the executable file
+# -Wall  - used to turn on most compiler warnings
+CFLAGS = -g -Wall
+
+test: 
+	g++ $(CFLAGS) $(CPPSOURCE) -o test && test 
+.PHONY: test
