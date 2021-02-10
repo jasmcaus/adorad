@@ -229,15 +229,13 @@ class weak_intrusive_ptr;
 template <class Target, class NullType = detail::intrusive_target_default_null_type<Target>>
 class intrusive_ptr final {
 private:
-    //  the following static assert would be nice to have but it requires
-    //  the target class T to be fully defined when intrusive_ptr<T> is instantiated
-    //  this is a problem for classes that contain pointers to themselves
-    //  static_assert(
-    //      std::is_base_of<intrusive_ptr_target, Target>::value,
+    //  the following static assert would be nice to have but it requires the target class T to be fully defined when 
+    // intrusive_ptr<T> is instantiated. This is a problem for classes that contain pointers to themselves.
+    //  static_assert(std::is_base_of<intrusive_ptr_target, Target>::value,
     //      "intrusive_ptr can only be used for classes that inherit from intrusive_ptr_target.");
     #ifndef _WIN32
         // This static_assert triggers on MSVC
-        //  error C2131: expression did not evaluate to a constant
+        // error C2131: expression did not evaluate to a constant
         static_assert(
             NullType::singleton() == NullType::singleton(),
             "NullType must have a constexpr singleton() method");
@@ -268,9 +266,8 @@ private:
             // and a destructor always mutates the object, even for const objects.
             const_cast<std::remove_const_t<Target>*>(target_)->release_resources();
 
-            // See comment above about weakcount. As long as refcount>0,
-            // weakcount is one larger than the actual number of weak references.
-            // So we need to decrement it here.
+            // See comment above about weakcount. As long as refcount>0, weakcount is one larger than the actual number 
+            // of weak references. So we need to decrement it here.
             if (target_->weakcount_.load(std::memory_order_acquire) == 1 || detail::atomic_weakcount_decrement(target_->weakcount_) == 0) {
                 delete target_;
             }
@@ -278,25 +275,20 @@ private:
         target_ = NullType::singleton();
     }
 
-    // raw pointer constructors are not public because we shouldn't make
-    // intrusive_ptr out of raw pointers except from inside the make_intrusive(),
-    // reclaim() and weak_intrusive_ptr::lock() implementations.
+    // raw pointer constructors are not public because we shouldn't make intrusive_ptr out of raw pointers except 
+    // from inside the make_intrusive(), reclaim() and weak_intrusive_ptr::lock() implementations.
 
-    // This constructor will not increase the ref counter for you.
-    // We use the tagged dispatch mechanism to explicitly mark this constructor
-    // to not increase the refcount
+    // This constructor will NOT increase the ref counter..
+    // We use the tagged dispatch mechanism to explicitly mark this constructor to not increase the refcount
     explicit intrusive_ptr(Target* target, raw::DontIncreaseRefcount) noexcept : target_(target) {}
 
-    // This constructor will increase the ref counter for you.
-    // This constructor will be used by the make_intrusive(), and also pybind11,
-    // which wrap the intrusive_ptr holder around the raw pointer and incref
-    // correspondingly (pybind11 requires raw pointer constructor to incref by
-    // default).
+    // This constructor WILL increase the ref counter.
+    // This constructor will be used by the make_intrusive() which wraps the intrusive_ptr holder around the raw pointer 
+    // and incref correspondingly
     explicit intrusive_ptr(Target* target) : intrusive_ptr(target, raw::DontIncreaseRefcount{}) {
         if (target_ != NullType::singleton()) {
-            // We can't use retain_(), because we also have to increase weakcount
-            // and because we allow raising these values from 0, which retain_()
-            // has an assertion against.
+            // We can't use retain_(), because we also have to increase weakcount and because we allow raising these values 
+            // from 0, which retain_() has an assertion against.
             detail::atomic_refcount_increment(target_->refcount_);
             detail::atomic_weakcount_increment(target_->weakcount_);
         }
@@ -377,38 +369,34 @@ public:
         return use_count() == 1; 
     }
 
-    // Returns an owning (!) pointer to the underlying object and makes the
-    // intrusive_ptr instance invalid. That means the refcount is not decreased.
-    // You *must* put the returned pointer back into a intrusive_ptr using
-    // intrusive_ptr::reclaim(ptr) to properly destruct it.
-    // This is helpful for C APIs.
+    // Returns an owning (!) pointer to the underlying object and makes the intrusive_ptr instance invalid. That means the 
+    // refcount is not decreased. You *must* put the returned pointer back into a intrusive_ptr using intrusive_ptr::reclaim
+    // (ptr) to properly destruct it. This is helpful for C APIs.
     Target* release() noexcept {
         Target* result = target_;
         target_ = NullType::singleton();
         return result;
     }
 
-    // Takes an owning pointer to Target* and creates an intrusive_ptr that takes
-    // over ownership. That means the refcount is not increased.
-    // This is the counter-part to intrusive_ptr::release() and the pointer
-    // passed in *must* have been created using intrusive_ptr::release().
+    // Takes an owning pointer to Target* and creates an intrusive_ptr that takes over ownership. That means the refcount 
+    // is not increased. 
+    // This is the counter-part to intrusive_ptr::release() and the pointer passed in *must* have been created using 
+    // intrusive_ptr::release().
     static intrusive_ptr reclaim(Target* owning_ptr) { 
         return intrusive_ptr(owning_ptr, raw::DontIncreaseRefcount{}); 
     }
 
 
-    // Allocate a heap object with args and wrap it inside a intrusive_ptr and
-    // incref. This is a helper function to let make_intrusive() access private
-    // intrusive_ptr constructors.
+    // Allocate a heap object with args and wrap it inside a intrusive_ptr and incref. This is a helper function to let 
+    // make_intrusive() access private intrusive_ptr constructors.
     template <class... Args>
     static intrusive_ptr make(Args&&... args) {
         auto result = intrusive_ptr(new Target(std::forward<Args>(args)...), raw::DontIncreaseRefcount{});
 
-        // We just created result.target_, so we know no other thread has
-        // access to it, so we know we needn't care about memory ordering.
-        // (On x86_64, a store with memory_order_relaxed generates a plain old
-        // `mov`, whereas an atomic increment does a lock-prefixed `add`, which is
-        // much more expensive: https://godbolt.org/z/eKPzj8.)
+        // We just created result.target_, so we know no other thread has access to it, so we know we needn't care about 
+        // memory ordering.
+        // (On x86_64, a store with memory_order_relaxed generates a plain old `mov`, whereas an atomic increment does a 
+        // lock-prefixed `add`, which is much more expensive: https://godbolt.org/z/eKPzj8.)
         CORETEN_CHECK(
             result.target_->refcount_ == 0 && result.target_->weakcount_ == 0,
             "intrusive_ptr: Newly-created target had non-zero refcounts. Does its constructor do something strange like incref or create "
@@ -546,6 +534,7 @@ private:
 
     constexpr explicit weak_intrusive_ptr(Target* target) : target_(target) {}
 
+
 public:
     using element_type = Target;
 
@@ -628,26 +617,19 @@ public:
         rhs.target_ = tmp;
     }
 
-    // NB: This should ONLY be used by the std::hash implementation
-    // for weak_intrusive_ptr.  Another way you could do this is
-    // friend std::hash<weak_intrusive_ptr>, but this triggers two
-    // bugs:
+    // NB: This should ONLY be used by the std::hash implementation for weak_intrusive_ptr.  Another way you could do this // is friend std::hash<weak_intrusive_ptr>, but this triggers two bugs:
     //
-    //  (1) It triggers an nvcc bug, where std::hash in a friend class
-    //      declaration gets preprocessed into hash, which then cannot
-    //      actually be found.  The error in this case looks like:
+    //  (1) It triggers an nvcc bug, where std::hash in a friend class declaration gets preprocessed into hash, which then 
+    //      cannot actually be found.  The error in this case looks like:
     //
     //        error: no template named 'hash'; did you mean 'std::hash'?
     //
-    //  (2) On OS X, std::hash is declared as a struct, not a class.
-    //      This twings:
+    //  (2) On OS X, std::hash is declared as a struct, not a class.This twings:
     //
-    //        error: class 'hash' was previously declared as a struct
-    //        [-Werror,-Wmismatched-tags]
+    //        error: class 'hash' was previously declared as a struct [-Werror,-Wmismatched-tags]
     //
-    // Both of these are work-aroundable, but on the whole, I decided
-    // it would be simpler and easier to make work if we just expose
-    // an unsafe getter for target_
+    // Both of these are work-aroundable, but on the whole, I decided it would be simpler and easier to make work if we 
+    // just expose an unsafe getter for target_
     //
     Target* _unsafe_get_target() const noexcept {
         return target_;
@@ -685,23 +667,20 @@ public:
         }
     }
 
-    // Returns an owning (but still only weakly referenced) pointer to the
-    // underlying object and makes the weak_intrusive_ptr instance invalid.
-    // That means the weakcount is not decreased.
-    // You *must* put the returned pointer back into a weak_intrusive_ptr using
-    // weak_intrusive_ptr::reclaim(ptr) to properly destruct it.
-    // This is helpful for C APIs.
+    // Returns an owning (but still only weakly referenced) pointer to the underlying object and makes the // 
+    // weak_intrusive_ptr instance invalid.
+    // That means the weakcount is not decreased. You *must* put the returned pointer back into a weak_intrusive_ptr using
+    // weak_intrusive_ptr::reclaim(ptr) to properly destruct it. This is helpful for C APIs.
     Target* release() noexcept {
         Target* result = target_;
         target_ = NullType::singleton();
         return result;
     }
 
-    // Takes an owning (but must be weakly referenced) pointer to Target* and
-    // creates a weak_intrusive_ptr that takes over ownership.
-    // This means that the weakcount is not increased.
-    // This is the counter-part to weak_intrusive_ptr::release() and the pointer
-    // passed in *must* have been created using weak_intrusive_ptr::release().
+    // Takes an owning (but must be weakly referenced) pointer to Target* and creates a weak_intrusive_ptr that takes over 
+    // ownership. This means that the weakcount is not increased. 
+    // This is the counter-part to weak_intrusive_ptr::release() and the pointer passed in *must* have been created using 
+    // weak_intrusive_ptr::release().
     static weak_intrusive_ptr reclaim(Target* owning_weak_ptr) {
         // See Note [Stack allocated intrusive_ptr_target safety]
         // if refcount > 0, weakcount must be >1 for weak references to exist.
@@ -746,48 +725,39 @@ inline bool operator!=(const weak_intrusive_ptr<Target1, NullType1>& lhs, const 
 }
 
 
-// Alias for documentary purposes, to more easily distinguish
-// weak raw intrusive pointers from intrusive pointers.
+// Alias for documentary purposes, to more easily distinguish weak raw intrusive pointers from intrusive pointers.
 using weak_intrusive_ptr_target = intrusive_ptr_target;
 
-// This namespace provides some methods for working with
-// raw pointers that subclass intrusive_ptr_target.  They are not provided
-// as methods on intrusive_ptr_target, because ideally you would not need these
-// methods at all (use smart pointers), but if you are dealing with legacy code
-// that still needs to pass around raw pointers, you may find these quite
-// useful.
+// This namespace provides some methods for working with raw pointers that subclass intrusive_ptr_target.  They are not provided as methods on intrusive_ptr_target, because ideally you would not need these methods at all (use smart pointers), 
+// but if you are dealing with legacy code that still needs to pass around raw pointers, you may find these quite useful.
 //
-// An important usage note: some functions are only valid if you have a
-// strong raw pointer to the object, while others are only valid if you
-// have a weak raw pointer to the object.  ONLY call intrusive_ptr namespace
-// functions on strong pointers, and weak_intrusive_ptr namespace functions
-// on weak pointers.  If you mix it up, you may get an assert failure.
+// An important usage note: some functions are only valid if you have a strong raw pointer to the object, while others are 
+// only valid if you have a weak raw pointer to the object.  ONLY call intrusive_ptr namespace functions on strong 
+// pointers, and weak_intrusive_ptr namespace functions on weak pointers.  If you mix it up, you may get an assert failure.
 
 namespace raw {
 
 namespace intrusive_ptr {
 
-  // WARNING: Unlike the reclaim() API, it is NOT valid to pass
-  // NullType::singleton to this function
+// WARNING: Unlike the reclaim() API, it is NOT valid to pass NullType::singleton to this function
 inline void incref(intrusive_ptr_target* self) {
     if (self) {
       detail::atomic_refcount_increment(self->__refcount);
     }
 }
 
-// WARNING: Unlike the reclaim() API, it is NOT valid to pass
-// NullType::singleton to this function
+// WARNING: Unlike the reclaim() API, it is NOT valid to pass NullType::singleton to this function
 inline void decref(intrusive_ptr_target* self) {
     // Let it die
     coreten::intrusive_ptr<intrusive_ptr_target>::reclaim(self);
-    // NB: Caller still has 'self' pointer, but it's now invalid.
-    // If you want more safety, used the actual coreten::intrusive_ptr class
+    // NB: Caller still has 'self' pointer, but it's now invalid. 
+    // If you want more safety, used the actual ccoreten::intrusive_ptr class
 }
 
 
 template <typename T>
 inline T* make_weak(T* self) {
-// NB: 'this' is a strong pointer, but we return a weak pointer
+    // NB: 'this' is a strong pointer, but we return a weak pointer
     auto ptr = coreten::intrusive_ptr<T>::reclaim(self);
     coreten::weak_intrusive_ptr<T> wptr(ptr);
     ptr.release();
@@ -802,6 +772,7 @@ inline size_t use_count(intrusive_ptr_target* self) {
 }
 
 } // namespace intrusive_ptr_target
+
 
 namespace weak_intrusive_ptr {
 
@@ -839,8 +810,7 @@ inline size_t use_count(weak_intrusive_ptr_target* self) {
 
 
 namespace std {
-// To allow intrusive_ptr and weak_intrusive_ptr inside std::unordered_map or
-// std::unordered_set, we need std::hash
+// To allow intrusive_ptr and weak_intrusive_ptr inside std::unordered_map or std::unordered_set, we need std::hash
 template <class Target, class NullType>
 struct hash<coreten::intrusive_ptr<Target, NullType>> {
     size_t operator()(const coreten::intrusive_ptr<Target, NullType>& x) const {
