@@ -10,7 +10,6 @@ __pycache__/*
 *.out
 *.obj
 
-csrc/build
 out/*
 assert/*
 torch-test/*
@@ -18,3 +17,4 @@ oldmake.bat
 main.cpp
 test.cpp 
 extern-sources/*
+possible_sources/*
