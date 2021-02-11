@@ -1,1 +1,1 @@
-#include "all.h"
+#include <adorad/all.h>

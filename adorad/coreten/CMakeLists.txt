@@ -56,7 +56,7 @@ add_subdirectory(testing)
 install(TARGETS coreten DESTINATION lib)
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
         DESTINATION include
-        FILES_MATCHING PATTERN "*.h"
+        FILES_MATCHING PATTERN "*.h>
         )
 
 if(MSVC)

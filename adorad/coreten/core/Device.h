@@ -1,6 +1,6 @@
 #pragma once 
 
-#include "adorad/coreten/Checks.h"
+#include <adorad/coreten/Checks.h>
 
 
 // coreten::Device is an enum which holds the current device (CPU/CUDA) that a Tensor is defined on

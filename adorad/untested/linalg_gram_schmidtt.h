@@ -33,7 +33,7 @@
 #include <cmath>     /// for fabs
 #include <iostream>  /// for io operations
 
-#include "math.h"
+#include <math.h>
 
 /**
  * @namespace linear_algebra

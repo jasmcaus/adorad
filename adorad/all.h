@@ -1,5 +1,5 @@
 #pragma once 
 
-#include "Tensor.h"
-#include "TensorFuncs.h"
-#include "Formatting.h"
+#include <adorad/Tensor.h>
+#include <adorad/TensorFuncs.h>
+#include <adorad/Formatting.h>

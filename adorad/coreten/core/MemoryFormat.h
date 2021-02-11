@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-#include "adorad/coreten/Checks.h"
-#include "adorad/coreten/String/StringUtil.h"
+#include <adorad/coreten/Checks.h>
+#include <adorad/coreten/String/StringUtil.h>
 
 
 // Memory format is NOT the property of a Tensor. It is simply a way to tell an operator how the result should be organized 

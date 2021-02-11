@@ -4,8 +4,8 @@
 #define CORETEN_ASSERT_VOID
 #define CORETEN_ASSERT_PTR
 
-#include "adorad/coreten/macros/Macros.h"
-#include "adorad/coreten/String/StringUtil.h"
+#include <adorad/coreten/macros/Macros.h>
+#include <adorad/coreten/String/StringUtil.h>
 
 #include <cstddef>
 #include <exception>

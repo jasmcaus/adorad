@@ -38,7 +38,7 @@
 #include <valarray>
 #include <vector>
 
-#include "vector_ops.hpp"  // Custom header file for vector operations
+#include <vector_ops.hpp"  // Custom header file for vector operations
 
 /** \namespace machine_learning
  * \brief Machine learning algorithms
