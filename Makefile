@@ -6,7 +6,7 @@ default_target: all
 # CMAKE_COMMAND = "C:\Program Files\CMake\bin\cmake.exe"
 CMAKE_COMMAND = cmake
 
-TARGET = ad
+TARGET = adorad
 SOURCE_DIR = .
 BUILD_DIR = build
 GENERATOR = "MinGW Makefiles" 
