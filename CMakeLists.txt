@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.7 FATAL_ERROR)
 
-project(ad CXX)
+project(adorad CXX)
 
 set(CMAKE_INSTALL_MESSAGE NEVER)
 
@@ -17,19 +17,22 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_C_STANDARD 11)
 
 
-option(ADORAD_NO_TEST "Do not build ATen test binaries" OFF)
+option(ADORAD_NO_TEST "Do not build Adorad test binaries" OFF)
 option(BUILD_BINARY "Build the C++ binaries" OFF)
 option(BUILD_DOCS "Build Adorad documentation" OFF)
 option(BUILD_PYTHON "Build Python binaries" ON)
-option(USE_CUDA "Use CUDA" ON)
+option(USE_CUDA "Use CUDA" OFF) # TODO (turn ON)
 option(USE_FAST_NVCC "Use parallel NVCC build" OFF)
+
 
 # ------ CMake build directories ----
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+
 enable_testing()
+
 
 # Set default build type
 if(NOT CMAKE_BUILD_TYPE)
@@ -133,15 +136,17 @@ if(NOT MSVC)
     endif()
 endif()
 
+
 # ---[ Main build
 add_subdirectory(adorad)
 
 
 file(GLOB SOURCES "adorad/*.cpp")
 # Adding the executable 
-add_executable(ad main.cpp)
+add_executable(adorad main.cpp)
 
-target_include_directories(ad
+target_include_directories(
+    adorad
     PRIVATE
-        ${PROJECT_SOURCE_DIR}/adorad/coreten
+    ${PROJECT_SOURCE_DIR}/adorad/coreten
 )
