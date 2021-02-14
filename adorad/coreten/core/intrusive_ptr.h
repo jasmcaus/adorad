@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <adorad/coreten/Checks.h>
+#include <adorad/coreten/macros/Macros.h>
 
 #include <atomic>
 #include <stdexcept> 
