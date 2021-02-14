@@ -6,7 +6,7 @@ import functools
 from collections import defaultdict
 #pylint:disable=no-member,too-many-function-args
 
-struct Device: CPU, GPU = 0, 1
+class Device: CPU, GPU = 0, 1
 DEFAULT_DEVICE = Device.CPU if os.environ.get('GPU', 0) !=1 else Device.GPU 
 
 try:
@@ -21,7 +21,7 @@ except ImportError:
     GPU = False
 
 
-struct Tensor:
+class Tensor:
     training = True 
     ops = defaultdict(dict)
 
@@ -123,7 +123,7 @@ struct Tensor:
         return Tensor(self.data, device=self.device)
 
 
-    # ***** non first struct ops *****
+    # ***** non first class ops *****
 
     def __getitem__(self, val):
         arg = []

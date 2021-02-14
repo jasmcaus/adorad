@@ -4,7 +4,7 @@ import inspect
 #pylint:disable=no-member,too-many-function-args,not-callable
 
 # An instantiation of the Function is the Context
-struct Function:
+class Function:
     def __init__(self, *tensors):
         self.parents = tensors
         self.saved_tensors = []
@@ -29,7 +29,7 @@ struct Function:
 
 # ************* unary ops *************
 
-struct ReLU(Function):
+class ReLU(Function):
     @staticmethod
     def forward(ctx, input):
         ctx.save_for_backward(input)
@@ -40,7 +40,7 @@ struct ReLU(Function):
         input, = ctx.saved_tensors
         return grad_output * (input >= 0)
 
-struct Log(Function):
+class Log(Function):
     @staticmethod
     def forward(ctx, input):
         ctx.save_for_backward(input)
@@ -52,7 +52,7 @@ struct Log(Function):
         return grad_output / input
 
 
-struct Exp(Function):
+class Exp(Function):
     @staticmethod
     def forward(ctx, input):
         ret = np.exp(input)
@@ -67,7 +67,7 @@ struct Exp(Function):
 
 # ************* reduce ops *************
 
-struct Sum(Function):
+class Sum(Function):
     @staticmethod
     def forward(ctx, input, axis=None):
         ctx.save_for_backward(input, axis)
@@ -80,7 +80,7 @@ struct Sum(Function):
         shape = [1 if axis is None or i in axis else input.shape[i] for i in range(len(input.shape))]
         return grad_output.reshape(shape) + np.zeros_like(input)
 
-struct Max(Function):
+class Max(Function):
     @staticmethod
     def forward(ctx, inp, axis=None):
         axis = [axis] if type(axis) == int else axis
@@ -105,7 +105,7 @@ def unbroadcast(out, in_sh):
     sum_axis = tuple([i for i in range(len(in_sh)) if in_sh[i]==1 and out.shape[i]>1]) if in_sh != (1,) else None
     return out.sum(axis=sum_axis).reshape(in_sh)
 
-struct Add(Function):
+class Add(Function):
     @staticmethod
     def forward(ctx, x, y):
         ctx.save_for_backward(x.shape, y.shape)
@@ -116,7 +116,7 @@ struct Add(Function):
         shape_x, shape_y = ctx.saved_tensors
         return unbroadcast(grad_output, shape_x), unbroadcast(grad_output, shape_y)
 
-struct Sub(Function):
+class Sub(Function):
     @staticmethod
     def forward(ctx, x, y):
         ctx.save_for_backward(x.shape, y.shape)
@@ -127,7 +127,7 @@ struct Sub(Function):
         shape_x, shape_y = ctx.saved_tensors
         return unbroadcast(grad_output, shape_x), unbroadcast(-grad_output, shape_y)
 
-struct Mul(Function):
+class Mul(Function):
     @staticmethod
     def forward(ctx, x, y):
         ctx.save_for_backward(x, y)
@@ -138,7 +138,7 @@ struct Mul(Function):
         x,y = ctx.saved_tensors
         return unbroadcast(y*grad_output, x.shape), unbroadcast(x*grad_output, y.shape)
 
-struct Pow(Function):
+class Pow(Function):
     @staticmethod
     def forward(ctx, x, y):
         ctx.save_for_backward(x, y)
@@ -152,7 +152,7 @@ struct Pow(Function):
 
 # ************* movement ops *************
 
-struct Reshape(Function):
+class Reshape(Function):
     @staticmethod
     def forward(ctx, x, shape):
         ctx.save_for_backward(x.shape)
@@ -163,7 +163,7 @@ struct Reshape(Function):
         in_shape, = ctx.saved_tensors
         return grad_output.reshape(in_shape)
 
-struct Transpose(Function):
+class Transpose(Function):
     @staticmethod
     def forward(ctx, x, order):
         ctx.save_for_backward(order)
@@ -179,7 +179,7 @@ def inner_slice(x, arg):
     slicee = [(p[0] + padding[i][0], p[1] + padding[i][0]) for i,p in enumerate(arg)]
     return x[tuple([slice(x[0], x[1], None) for x in slicee])]
 
-struct Slice(Function):
+class Slice(Function):
     @staticmethod
     def forward(ctx, x, arg=None):
         ctx.save_for_backward(x.shape)
@@ -194,7 +194,7 @@ struct Slice(Function):
 
 # ************* processing ops *************
 
-struct Matmul(Function):
+class Matmul(Function):
     @staticmethod
     def forward(ctx, input, weight):
         ctx.save_for_backward(input, weight)
@@ -207,7 +207,7 @@ struct Matmul(Function):
         grad_weight = np.swapaxes(input, -2, -1) @ grad_output
         return grad_input, grad_weight
 
-struct Conv2D(Function):
+class Conv2D(Function):
     @staticmethod
     def forward(ctx, x, w, stride=1, groups=1):
         if type(ctx.stride) == int:
