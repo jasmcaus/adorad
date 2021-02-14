@@ -14,7 +14,7 @@
 //     If you have an CUDA-supported device, this should be used 
 namespace coreten {
 
-enum struct Device : int8_t {
+enum class Device : int8_t {
     CPU,
     CUDA
 };

@@ -10,14 +10,14 @@
 // 
 // This design is motivated, in part, by the boost::intrusive_ptr and the coreten::intrusive_ptr 
 // 
-// Like the name indicates, it's intrusive - reference counting is included directly in the managed struct as opposed 
+// Like the name indicates, it's intrusive - reference counting is included directly in the managed class as opposed 
 // to std::shared_ptr where the ref counter has to be dynamically allocated to live beside the object 
 // Considering the memory footprint, intrusive_ptr is the same as that of a raw pointer (this, however, is not the
 // same case for the std::shared_ptr that holds a pointer to the object, a pointer to the counter and the counter 
 // itself). 
 // 
-// Consider a struct X like:
-//      struct X {
+// Consider a class X like:
+//      class X {
 //          std::string name;
 //          int age;
 //      };
@@ -30,7 +30,7 @@
 //      }
 // 
 // To use an intrusive_ptr, you'd have to have a reference counter inside the class: 
-//      struct X {
+//      class X {
 //          std::string name;
 //          int age;
 //          long references; 
@@ -65,7 +65,7 @@
 // disadvantages when using this pointer type compared to a shared_ptr :
 
 //       1. It's impossible to create a weak_ptr from a intrusive_ptr
-//       2. Code redundancy -  you have to copy the reference counter in every struct that you want to use an 
+//       2. Code redundancy -  you have to copy the reference counter in every class that you want to use an 
 //          intrusive_ptr with
 //       3. You have to provide a function for every types that has to be used with intrusive_ptr (only two functions 
 //          if you use the template versions of the two functions)
@@ -84,7 +84,7 @@
 
 
 namespace coreten {
-struct intrusive_ptr_target;
+class intrusive_ptr_target;
 
 namespace raw {
 namespace weak_intrusive_ptr {
@@ -96,28 +96,28 @@ namespace intrusive_ptr {
 } //namespace (raw::)intrusive_ptr 
 
 // constructor tag used by intrusive_ptr constructors
-struct DontIncreaseRefcount {};
+class DontIncreaseRefcount {};
 
 } // namespace raw 
 
 
 // Similar to coreten::intrusive_ptr_target 
-struct intrusive_ptr_target {
+class intrusive_ptr_target {
 
     mutable std::atomic<size_t> __refcount;
     mutable std::atomic<size_t> __weakcount;
 
     template <typename T, typename NullType>
-    friend struct intrusive_ptr;
+    friend class intrusive_ptr;
     friend inline void raw::intrusive_ptr::incref(intrusive_ptr_target* self);
 
     template <typename T, typename NullType>
-    friend struct weak_intrusive_ptr;
+    friend class weak_intrusive_ptr;
     friend inline void raw::weak_intrusive_ptr::incref(intrusive_ptr_target* self);
 
 protected:
     // Protected Destructor 
-    // Ideally, you'll never want to destruct intrusive_ptr* directly 
+    // Ideally, you'll never want to declass intrusive_ptr* directly 
     virtual ~intrusive_ptr_target() {
         // Disable -Wterminate and -Wexceptions so we're allowed to use assertions
         // (i.e. throw exceptions) in a destructor.
@@ -137,11 +137,11 @@ protected:
 
         CORETEN_ENFORCE(
             __refcount.load() == 0,
-            "Attempted to destruct an intrusive_ptr_target that still has an intrusive_ptr to it"
+            "Attempted to declass an intrusive_ptr_target that still has an intrusive_ptr to it"
         );
         CORETEN_ENFORCE(
             __weakcount.load() == 0 || __weakcount.load() == 1,
-            "Attempted to destruct an intrusive_ptr_target that still has a weak_intrusive_ptr to it"
+            "Attempted to declass an intrusive_ptr_target that still has a weak_intrusive_ptr to it"
         );
 
         #if defined(_MSC_VER) && !defined(__clang__)
@@ -169,27 +169,27 @@ private:
     // This can be overridden to release expensive resources
     // There still might exist weak references, so your object might not get destructed just yet, but you can assume
     // that the object isn't used anymore, 
-    // i.e no more calls to methods or accesses to member (you can destruct it yet because the __weakcount needs to be 
+    // i.e no more calls to methods or accesses to member (you can declass it yet because the __weakcount needs to be 
     // accessible). 
     // 
     // If there are no weak references, this function is guaranteed to be called first. 
-    // However, if you use your struct for an object on the stack that is desctucted by the scope (i.e without the 
+    // However, if you use your class for an object on the stack that is desctucted by the scope (i.e without the 
     // intrusive_ptr), this function will not be called. 
     // 
     virtual void release_resources() {} 
-}; // struct intrusive_ptr_target
+}; // class intrusive_ptr_target
 
 
 namespace detail {
 
-template <struct Target>
-struct intrusive_target_default_null_type final {
+template <class Target>
+class intrusive_target_default_null_type final {
     static constexpr Target* singleton() noexcept {
         return nullptr;
     }
 };
 
-template <struct Target, struct toNullType, struct fromNullType>
+template <class Target, class toNullType, class fromNullType>
 Target* assign_ptr(Target* rhs) {
     if(fromNullType::singleton() == rhs) { 
         return toNullType::singleton(); 
@@ -223,13 +223,13 @@ inline size_t atomic_weakcount_decrement(std::atomic<size_t>& weakcount) {
 } // namespace detail
 
 
-template <struct Target, struct NullType>
-struct weak_intrusive_ptr;
+template <class Target, class NullType>
+class weak_intrusive_ptr;
 
-template <struct Target, struct NullType = detail::intrusive_target_default_null_type<Target>>
-struct intrusive_ptr final {
+template <class Target, class NullType = detail::intrusive_target_default_null_type<Target>>
+class intrusive_ptr final {
 private:
-    //  the following static assert would be nice to have but it requires the target struct T to be fully defined when 
+    //  the following static assert would be nice to have but it requires the target class T to be fully defined when 
     // intrusive_ptr<T> is instantiated. This is a problem for classes that contain pointers to themselves.
     //  static_assert(std::is_base_of<intrusive_ptr_target, Target>::value,
     //      "intrusive_ptr can only be used for classes that inherit from intrusive_ptr_target.");
@@ -246,9 +246,9 @@ private:
 
     Target* target_;
 
-    template <struct Target2, struct NullType2>
-    friend struct intrusive_ptr;
-    friend struct weak_intrusive_ptr<Target, NullType>;
+    template <class Target2, class NullType2>
+    friend class intrusive_ptr;
+    friend class weak_intrusive_ptr<Target, NullType>;
 
     void retain_() {
         if (target_ != NullType::singleton()) {
@@ -303,7 +303,7 @@ public:
         rhs.target_ = NullType::singleton(); 
     }
 
-    template <struct From, struct FromNullType>
+    template <class From, class FromNullType>
     /* implicit */ intrusive_ptr(intrusive_ptr<From, FromNullType>&& rhs) noexcept
             : target_(detail::assign_ptr_<Target, NullType, FromNullType>(rhs.target_)) {
         static_assert(std::is_convertible<From*, Target*>::value,
@@ -316,7 +316,7 @@ public:
         retain_();  
     }
 
-    template <struct From, struct FromNullType>
+    template <class From, class FromNullType>
     /* implicit */ intrusive_ptr(const intrusive_ptr<From, FromNullType>& rhs) 
         : target_(detail::assign_ptr_<Target, NullType, FromNullType>(rhs.target_)) {
         static_assert(
@@ -371,7 +371,7 @@ public:
 
     // Returns an owning (!) pointer to the underlying object and makes the intrusive_ptr instance invalid. That means the 
     // refcount is not decreased. You *must* put the returned pointer back into a intrusive_ptr using intrusive_ptr::reclaim
-    // (ptr) to properly destruct it. This is helpful for C APIs.
+    // (ptr) to properly declass it. This is helpful for C APIs.
     Target* release() noexcept {
         Target* result = target_;
         target_ = NullType::singleton();
@@ -426,7 +426,7 @@ public:
     // 
     // Operator-stuff 
     // 
-    template <struct From, struct FromNullType>
+    template <class From, class FromNullType>
     intrusive_ptr& operator=(intrusive_ptr<From, FromNullType>&& rhs) &  noexcept {
         static_assert(std::is_convertible<From*, Target*>::value,
             "Type mismatch. intrusive_ptr move assignment got pointer of wrong type.");
@@ -443,7 +443,7 @@ public:
         return operator=<Target, NullType>(rhs); 
     }
 
-    template <struct From, struct FromNullType>
+    template <class From, class FromNullType>
     intrusive_ptr& operator=(const intrusive_ptr<From, NullType>& rhs) & {
         static_assert(std::is_convertible<From*, Target*>::value,
             "Type mismatch: intrusive_ptr copy assignment got pointer of wrong type.");
@@ -460,41 +460,41 @@ public:
         return target_; 
     }
 
-}; // struct intrusive_ptr (final)
+}; // class intrusive_ptr (final)
 
 
 template <
-    struct Target,
-    struct NullType = detail::intrusive_target_default_null_type<Target>,
+    class Target,
+    class NullType = detail::intrusive_target_default_null_type<Target>,
     class... Args>
 inline intrusive_ptr<Target, NullType> make_intrusive(Args&&... args) {
     return intrusive_ptr<Target, NullType>::make(std::forward<Args>(args)...);
 }
 
 
-template <struct Target, struct NullType>
+template <class Target, class NullType>
 inline void swap(intrusive_ptr<Target, NullType>& lhs, intrusive_ptr<Target, NullType>& rhs) noexcept {
     lhs.swap(rhs);
 }
 
 // To allow intrusive_ptr inside std::map or std::set, we need operator<
-template <struct Target1, struct NullType1, struct Target2, struct NullType2>
+template <class Target1, class NullType1, class Target2, class NullType2>
 inline bool operator<(const intrusive_ptr<Target1, NullType1>& lhs, const intrusive_ptr<Target2, NullType2>& rhs) noexcept {
     return lhs.get() < rhs.get();
 }
 
-template <struct Target1, struct NullType1, struct Target2, struct NullType2>
+template <class Target1, class NullType1, class Target2, class NullType2>
 inline bool operator==(const intrusive_ptr<Target1, NullType1>& lhs, const intrusive_ptr<Target2, NullType2>& rhs) noexcept {
     return lhs.get() == rhs.get();
 }
 
-template <struct Target1, struct NullType1, struct Target2, struct NullType2>
+template <class Target1, class NullType1, class Target2, class NullType2>
 inline bool operator!=(const intrusive_ptr<Target1, NullType1>& lhs, const intrusive_ptr<Target2, NullType2>& rhs) noexcept {
     return !operator==(lhs, rhs);
 }
 
-template <typename Target, struct NullType = detail::intrusive_target_default_null_type<Target>>
-struct weak_intrusive_ptr final {
+template <typename Target, class NullType = detail::intrusive_target_default_null_type<Target>>
+class weak_intrusive_ptr final {
 private:
     static_assert(std::is_base_of<intrusive_ptr_target, Target>::value,
         "intrusive_ptr can only be used for classes that inherit from intrusive_ptr_target.");
@@ -512,8 +512,8 @@ private:
 
     Target* target_;
 
-    template <struct Target2, struct NullType2>
-    friend struct weak_intrusive_ptr;
+    template <class Target2, class NullType2>
+    friend class weak_intrusive_ptr;
 
     void retain_() {
         if (target_ != NullType::singleton()) {
@@ -546,7 +546,7 @@ public:
         rhs.target_ = NullType::singleton();
     }
 
-    template <struct From, struct FromNullType>
+    template <class From, class FromNullType>
     /* implicit */ weak_intrusive_ptr(weak_intrusive_ptr<From, FromNullType>&& rhs) noexcept
       : target_(detail::assign_ptr_<Target, NullType, FromNullType>(rhs.target_)) {
         static_assert(
@@ -559,7 +559,7 @@ public:
         retain_();
     }
 
-    template <struct From, struct FromNullType>
+    template <class From, class FromNullType>
     /* implicit */ weak_intrusive_ptr(const weak_intrusive_ptr<From, FromNullType>& rhs)
         : target_(detail::assign_ptr_<Target, NullType, FromNullType>(rhs.target_)) {
         static_assert(
@@ -576,7 +576,7 @@ public:
         return operator=<Target, NullType>(std::move(rhs));
     }
 
-    template <struct From, struct FromNullType>
+    template <class From, class FromNullType>
     weak_intrusive_ptr& operator=(weak_intrusive_ptr<From, FromNullType>&& rhs) & noexcept {
         static_assert(
             std::is_convertible<From*, Target*>::value,
@@ -597,7 +597,7 @@ public:
         return *this;
     }
 
-    template <struct From, struct FromNullType>
+    template <class From, class FromNullType>
     weak_intrusive_ptr& operator=(const weak_intrusive_ptr<From, NullType>& rhs) & {
         static_assert(std::is_convertible<From*, Target*>::value,
             "Type mismatch. weak_intrusive_ptr copy assignment got pointer of wrong type.");
@@ -619,14 +619,14 @@ public:
 
     // NB: This should ONLY be used by the std::hash implementation for weak_intrusive_ptr.  Another way you could do this // is friend std::hash<weak_intrusive_ptr>, but this triggers two bugs:
     //
-    //  (1) It triggers an nvcc bug, where std::hash in a friend struct declaration gets preprocessed into hash, which then 
+    //  (1) It triggers an nvcc bug, where std::hash in a friend class declaration gets preprocessed into hash, which then 
     //      cannot actually be found.  The error in this case looks like:
     //
     //        error: no template named 'hash'; did you mean 'std::hash'?
     //
     //  (2) On OS X, std::hash is declared as a struct, not a class.This twings:
     //
-    //        error: struct 'hash' was previously declared as a struct [-Werror,-Wmismatched-tags]
+    //        error: class 'hash' was previously declared as a class [-Werror,-Wmismatched-tags]
     //
     // Both of these are work-aroundable, but on the whole, I decided it would be simpler and easier to make work if we 
     // just expose an unsafe getter for target_
@@ -670,7 +670,7 @@ public:
     // Returns an owning (but still only weakly referenced) pointer to the underlying object and makes the // 
     // weak_intrusive_ptr instance invalid.
     // That means the weakcount is not decreased. You *must* put the returned pointer back into a weak_intrusive_ptr using
-    // weak_intrusive_ptr::reclaim(ptr) to properly destruct it. This is helpful for C APIs.
+    // weak_intrusive_ptr::reclaim(ptr) to properly declass it. This is helpful for C APIs.
     Target* release() noexcept {
         Target* result = target_;
         target_ = NullType::singleton();
@@ -694,32 +694,32 @@ public:
         return weak_intrusive_ptr(owning_weak_ptr);
     }
 
-    template <struct Target1, struct NullType1, struct Target2, struct NullType2>
+    template <class Target1, class NullType1, class Target2, class NullType2>
     friend bool operator<(const weak_intrusive_ptr<Target1, NullType1>& lhs, const weak_intrusive_ptr<Target2, NullType2>& rhs) noexcept;
 
-    template <struct Target1, struct NullType1, struct Target2, struct NullType2>
+    template <class Target1, class NullType1, class Target2, class NullType2>
     friend bool operator==(const weak_intrusive_ptr<Target1, NullType1>& lhs, const weak_intrusive_ptr<Target2, NullType2>& rhs) noexcept;
 
-}; // struct weak_intrusive_ptr
+}; // class weak_intrusive_ptr
 
 
-template <struct Target, struct NullType>
+template <class Target, class NullType>
 inline void swap(weak_intrusive_ptr<Target, NullType>& lhs, weak_intrusive_ptr<Target, NullType>& rhs) noexcept {
     lhs.swap(rhs);
 }
 
 // To allow weak_intrusive_ptr inside std::map or std::set, we need operator<
-template <struct Target1, struct NullType1, struct Target2, struct NullType2>
+template <class Target1, class NullType1, class Target2, class NullType2>
 inline bool operator<(const weak_intrusive_ptr<Target1, NullType1>& lhs, const weak_intrusive_ptr<Target2, NullType2>& rhs) noexcept {
     return lhs.target_ < rhs.target_;
 }
 
-template <struct Target1, struct NullType1, struct Target2, struct NullType2>
+template <class Target1, class NullType1, class Target2, class NullType2>
 inline bool operator==(const weak_intrusive_ptr<Target1, NullType1>& lhs, const weak_intrusive_ptr<Target2, NullType2>& rhs) noexcept {
     return lhs.target_ == rhs.target_;
 }
 
-template <struct Target1, struct NullType1, struct Target2, struct NullType2>
+template <class Target1, class NullType1, class Target2, class NullType2>
 inline bool operator!=(const weak_intrusive_ptr<Target1, NullType1>& lhs, const weak_intrusive_ptr<Target2, NullType2>& rhs) noexcept {
     return !operator==(lhs, rhs);
 }
@@ -728,7 +728,7 @@ inline bool operator!=(const weak_intrusive_ptr<Target1, NullType1>& lhs, const 
 // Alias for documentary purposes, to more easily distinguish weak raw intrusive pointers from intrusive pointers.
 using weak_intrusive_ptr_target = intrusive_ptr_target;
 
-// This namespace provides some methods for working with raw pointers that substruct intrusive_ptr_target.  They are not provided as methods on intrusive_ptr_target, because ideally you would not need these methods at all (use smart pointers), 
+// This namespace provides some methods for working with raw pointers that subclass intrusive_ptr_target.  They are not provided as methods on intrusive_ptr_target, because ideally you would not need these methods at all (use smart pointers), 
 // but if you are dealing with legacy code that still needs to pass around raw pointers, you may find these quite useful.
 //
 // An important usage note: some functions are only valid if you have a strong raw pointer to the object, while others are 
@@ -811,15 +811,15 @@ inline size_t use_count(weak_intrusive_ptr_target* self) {
 
 namespace std {
 // To allow intrusive_ptr and weak_intrusive_ptr inside std::unordered_map or std::unordered_set, we need std::hash
-template <struct Target, struct NullType>
-struct hash<coreten::intrusive_ptr<Target, NullType>> {
+template <class Target, class NullType>
+class hash<coreten::intrusive_ptr<Target, NullType>> {
     size_t operator()(const coreten::intrusive_ptr<Target, NullType>& x) const {
         return std::hash<Target*>()(x.get());
     }
 };
 
-template <struct Target, struct NullType>
-struct hash<coreten::weak_intrusive_ptr<Target, NullType>> {
+template <class Target, class NullType>
+class hash<coreten::weak_intrusive_ptr<Target, NullType>> {
     size_t operator()(const coreten::weak_intrusive_ptr<Target, NullType>& x) const {
         return std::hash<Target*>()(x._unsafe_get_target());
     }

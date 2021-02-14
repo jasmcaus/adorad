@@ -49,7 +49,7 @@ namespace coreten {
 ///
 /// NB: coreten::Error is handled specially  to suppress the backtrace
 
-struct Error : public std::exception {
+class Error : public std::exception {
     // The actual error message.
     std::string msg_;
 
@@ -79,25 +79,25 @@ struct Error : public std::exception {
 // Used for out-of-bound indices that can reasonably only be detected
 // lazily inside a kernel (See: advanced indexing).  These turn into
 // IndexError when they cross to Python.
-struct IndexError : public Error {
+class IndexError : public Error {
     using Error::Error;
 };
 
 // Used for invalid values.  These turn into
 // ValueError when they cross to Python.
-struct ValueError : public Error {
+class ValueError : public Error {
     using Error::Error;
 };
 
 // Used for invalid types.  These turn into
 // TypeError when they cross to Python.
-struct TypeError : public Error {
+class TypeError : public Error {
     using Error::Error;
 };
 
 // Used for non finite indices.  These turn into
 // ExitException when they cross to Python.
-struct EnforceFiniteError : public Error {
+class EnforceFiniteError : public Error {
     using Error::Error;
 };
 
