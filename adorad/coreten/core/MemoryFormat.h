@@ -57,7 +57,7 @@ inline std::ostream& operator<<(std::ostream& stream, MemoryFormat memory_format
 
         default:
             // Hard-coding false, 
-            CORETEN_CHECK(false, "Unknown memory format");
+            CORETEN_ENFORCE(false, "Unknown memory format");
     }
 }
 

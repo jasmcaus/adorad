@@ -37,7 +37,7 @@ inline std::ostream& operator<<(std::ostream& stream, Device device_format) {
 
         default:
             // Hard-coding false, 
-            CORETEN_CHECK(false, "Unknown Device format");
+            CORETEN_ENFORCE(false, "Unknown Device format");
     }
 }
 

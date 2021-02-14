@@ -119,11 +119,11 @@ inline std::string if_empty(const std::string& x, const std::string& y) {
 // operator<< defined.  Most objects in PyTorch have these definitions!)
 //
 // Usage:
-//    CORETEN_CHECK(should_be_true); // A default error message will be provided
+//    CORETEN_ENFORCE(should_be_true); // A default error message will be provided
 //                                 // in this case; but we recommend writing an
 //                                 // explicit error message, as it is more
 //                                 // user friendly.
-//    CORETEN_CHECK(x == 0, "Expected x to be 0, but got ", x);
+//    CORETEN_ENFORCE(x == 0, "Expected x to be 0, but got ", x);
 //
 // On failure, this macro will raise an exception.  If this exception propagates
 // to Python, it will convert into a Python RuntimeError.
@@ -139,38 +139,38 @@ inline std::string if_empty(const std::string& x, const std::string& y) {
 
 
 
-#define CORETEN_CHECK_MSG(cond, type, ...)                              \
+#define CORETEN_ENFORCE_MSG(cond, type, ...)                              \
     ::coreten::detail::if_empty(                                        \
         ::coreten::listr(__VA_ARGS__),                                  \
         "Expected " #cond " to be true, but got false.  "               \
     )
 
-#define CORETEN_CHECK_WITH_MSG(error_t, cond, type, ...)                \
+#define CORETEN_ENFORCE_WITH_MSG(error_t, cond, type, ...)                \
     if (CORETEN_UNLIKELY_OR_CONST(!(cond))) {                           \
-        CORETEN_THROW_ERROR(error_t, CORETEN_CHECK_MSG(cond, type, __VA_ARGS__)); \
+        CORETEN_THROW_ERROR(error_t, CORETEN_ENFORCE_MSG(cond, type, __VA_ARGS__)); \
     }
 
 
-#define CORETEN_CHECK(cond, ...)                                          \
+#define CORETEN_ENFORCE(cond, ...)                                          \
     if (CORETEN_UNLIKELY_OR_CONST(!(cond))) {                             \
         ::coreten::detail::coretenCheckFail(                              \
             __func__, __FILE__, static_cast<uint32_t>(__LINE__),          \
-            CORETEN_CHECK_MSG(cond, "", __VA_ARGS__));                    \
+            CORETEN_ENFORCE_MSG(cond, "", __VA_ARGS__));                    \
     }
 
 
 
-// Like CORETEN_CHECK, but raises IndexErrors instead of Errors.
-#define CORETEN_CHECK_INDEX(cond, ...) \
-    CORETEN_CHECK_WITH_MSG(IndexError, cond, "INDEX", __VA_ARGS__)
+// Like CORETEN_ENFORCE, but raises IndexErrors instead of Errors.
+#define CORETEN_ENFORCE_INDEX(cond, ...) \
+    CORETEN_ENFORCE_WITH_MSG(IndexError, cond, "INDEX", __VA_ARGS__)
 
-// Like CORETEN_CHECK, but raises ValueErrors instead of Errors.
-#define CORETEN_CHECK_VALUE(cond, ...) \
-    CORETEN_CHECK_WITH_MSG(ValueError, cond, "VALUE", __VA_ARGS__)
+// Like CORETEN_ENFORCE, but raises ValueErrors instead of Errors.
+#define CORETEN_ENFORCE_VALUE(cond, ...) \
+    CORETEN_ENFORCE_WITH_MSG(ValueError, cond, "VALUE", __VA_ARGS__)
 
-// Like CORETEN_CHECK, but raises TypeErrors instead of Errors.
-#define CORETEN_CHECK_TYPE(cond, ...) \
-    CORETEN_CHECK_WITH_MSG(TypeError, cond, "TYPE", __VA_ARGS__)
+// Like CORETEN_ENFORCE, but raises TypeErrors instead of Errors.
+#define CORETEN_ENFORCE_TYPE(cond, ...) \
+    CORETEN_ENFORCE_WITH_MSG(TypeError, cond, "TYPE", __VA_ARGS__)
 
 
 

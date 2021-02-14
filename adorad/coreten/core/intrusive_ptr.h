@@ -135,11 +135,11 @@ protected:
             #pragma GCC diagnostic ignored "-Wexceptions"
         #endif
 
-        CORETEN_CHECK(
+        CORETEN_ENFORCE(
             __refcount.load() == 0,
             "Attempted to destruct an intrusive_ptr_target that still has an intrusive_ptr to it"
         );
-        CORETEN_CHECK(
+        CORETEN_ENFORCE(
             __weakcount.load() == 0 || __weakcount.load() == 1,
             "Attempted to destruct an intrusive_ptr_target that still has a weak_intrusive_ptr to it"
         );
@@ -253,7 +253,7 @@ private:
     void retain_() {
         if (target_ != NullType::singleton()) {
             size_t new_refcount = detail::atomic_refcount_increment(target_->refcount_);
-            CORETEN_CHECK(
+            CORETEN_ENFORCE(
                 new_refcount != 1,
                 "intrusive_ptr: Cannot increase refcount after it reached zero."
             );
@@ -397,7 +397,7 @@ public:
         // memory ordering.
         // (On x86_64, a store with memory_order_relaxed generates a plain old `mov`, whereas an atomic increment does a 
         // lock-prefixed `add`, which is much more expensive: https://godbolt.org/z/eKPzj8.)
-        CORETEN_CHECK(
+        CORETEN_ENFORCE(
             result.target_->refcount_ == 0 && result.target_->weakcount_ == 0,
             "intrusive_ptr: Newly-created target had non-zero refcounts. Does its constructor do something strange like incref or create "
             "an intrusive_ptr from `this`?"
@@ -413,7 +413,7 @@ public:
     // This method is potentially dangerous (as it can mess up refcount).
     static intrusive_ptr unsafe_reclaim_from_nonowning(Target* raw_ptr) {
         // See Note [Stack allocated intrusive_ptr_target safety]
-        CORETEN_CHECK(
+        CORETEN_ENFORCE(
             raw_ptr == NullType::singleton() || raw_ptr->refcount_.load() > 0,
             "intrusive_ptr can only reclaim pointers that are owned by someone"
         );
@@ -518,7 +518,7 @@ private:
     void retain_() {
         if (target_ != NullType::singleton()) {
             size_t new_weakcount = detail::atomic_weakcount_increment(target_->weakcount_);
-            CORETEN_CHECK(
+            CORETEN_ENFORCE(
                 new_weakcount != 1,
                 "weak_intrusive_ptr: Cannot increase weakcount after it reached zero."
             );
@@ -686,7 +686,7 @@ public:
         // if refcount > 0, weakcount must be >1 for weak references to exist.
         // see weak counting explanation at top of this file.
         // if refcount == 0, weakcount only must be >0.
-        CORETEN_CHECK(
+        CORETEN_ENFORCE(
             owning_weak_ptr == NullType::singleton() || owning_weak_ptr->weakcount_.load() > 1 ||
             (owning_weak_ptr->refcount_.load() == 0 && owning_weak_ptr->weakcount_.load() > 0),
             "weak_intrusive_ptr: Can only weak_intrusive_ptr::reclaim() owning pointers that were created using weak_intrusive_ptr::release()."
