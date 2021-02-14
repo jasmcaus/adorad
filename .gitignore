@@ -4,15 +4,16 @@
 # refactoring this file! 
 
 # Adorad
-adorad.egg-info/*
+python/adorad.egg-info/*
+python/build/*
+docs/build/*
+build/*
 out/*
 torch-test/*
 test/*
 python/test.py
 extern-sources/*
 possible_sources/*
-docs/build/*
-build/*
 oldmake.bat
 main.cpp
 test.cpp 
