@@ -26,7 +26,7 @@
 
 namespace coreten {
 
-enum class MemoryFormat : int8_t {
+enum struct MemoryFormat : int8_t {
     Preserve, 
     ChannelsLast, 
     Contiguous

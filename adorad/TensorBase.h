@@ -8,7 +8,7 @@
 
 namespace ad {
 
-class Tensor {
+struct Tensor {
 public:
     const int ndim = 2; // 2D Tensor 
     const long numelem = rows*columns;
@@ -246,6 +246,6 @@ private:
         }
     }
 
-}; // Class Tensor
+}; // struct Tensor
 
 } //namespace ad
