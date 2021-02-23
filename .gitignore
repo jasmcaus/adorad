@@ -12,7 +12,6 @@ out/*
 torch-test/*
 test/*
 python/test.py
-extern-sources/*
 possible_sources/*
 oldmake.bat
 main.cpp
