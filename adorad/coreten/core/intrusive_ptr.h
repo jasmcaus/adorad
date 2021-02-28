@@ -5,6 +5,14 @@
 #include <atomic>
 #include <stdexcept> 
 
+// Sources: 
+// 1. https://github.com/ali01/smart-ptr
+// 2. https://github.com/fr0streaper/intrusive-ptr
+// 3. https://github.com/slurps-mad-rips/retain-ptr
+// 4. https://github.com/gershnik/intrusive_shared_ptr
+// 5. https://github.com/kaidul/Smart_Pointer
+// 6. https://github.com/aliardaeker/Smart-Pointer
+
 
 // coreten::intrusive_ptr is a faster alternative of std::shared_ptr 
 // 
